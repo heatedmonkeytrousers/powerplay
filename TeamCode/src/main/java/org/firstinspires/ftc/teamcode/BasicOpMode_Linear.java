@@ -90,33 +90,31 @@ public class BasicOpMode_Linear extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower;
-            double rightPower;
+            double frontLeftPower;
+            double frontRightPower;
+            double rearLeftPower;
+            double rearRightPower;
 
-            // Choose to drive using either Tank Mode, or POV Mode
-            // Comment out the method that's not used.  The default below is POV.
-
-            // POV Mode uses left stick to go forward, and right stick to turn.
+            // POV Mode uses left stick to go forward and strafe, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
             double drive = gamepad1.left_stick_y;
+            double strafe = gamepad1.left_stick_x;
             double turn  = -gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-
-            // Tank Mode uses one stick to control each wheel.
-            // - This requires no math, but it is hard to drive forward slowly and keep straight.
-            // leftPower  = -gamepad1.left_stick_y ;
-            // rightPower = -gamepad1.right_stick_y ;
+            frontLeftPower    = Range.clip(drive + turn - strafe, -1.0, 1.0);
+            rearLeftPower    = Range.clip(drive + turn + strafe, -1.0, 1.0);
+            frontRightPower   = Range.clip(drive - turn + strafe, -1.0, 1.0);
+            rearRightPower   = Range.clip(drive - turn - strafe, -1.0, 1.0);
 
             // Send calculated power to wheels
-            frontLeftDrive.setPower(leftPower);
-            rearLeftDrive.setPower(leftPower);
-            frontRightDrive.setPower(rightPower);
-            rearRightDrive.setPower(rightPower);
+            frontLeftDrive.setPower(frontLeftPower);
+            rearLeftDrive.setPower(rearLeftPower);
+            frontRightDrive.setPower(frontRightPower);
+            rearRightDrive.setPower(rearRightPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Front Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
+            telemetry.addData("Rear Motors", "left (%.2f), right (%.2f)", rearLeftPower, rearRightPower);
             telemetry.addData("Left Stick", "x (%.2f), y (%.2f)", gamepad1.left_stick_x, gamepad1.left_stick_y);
             telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
             telemetry.addData("D-PAD", "l (%b), r (%b)", gamepad1.dpad_left, gamepad1.dpad_right);
