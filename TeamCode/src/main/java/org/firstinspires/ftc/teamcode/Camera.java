@@ -118,6 +118,7 @@ public class Camera extends LinearOpMode{
         public void onViewportTapped()
         {
 
+
             viewportPaused = !viewportPaused;
 
             if(viewportPaused)
@@ -127,6 +128,7 @@ public class Camera extends LinearOpMode{
             else
             {
                 webcam.resumeViewport();
+
             }
         }
     }
