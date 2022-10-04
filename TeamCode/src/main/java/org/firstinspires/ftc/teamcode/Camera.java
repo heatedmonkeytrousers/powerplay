@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -38,11 +39,11 @@ public class Camera extends LinearOpMode{
             @Override
             public void onError(int errorCode)
             {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
+
             }
+
         });
+
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
@@ -73,7 +74,6 @@ public class Camera extends LinearOpMode{
             if(gamepad1.a)
             {
                 webcam.stopStreaming();
-                //webcam.closeCameraDevice();
             }
 
             /*
