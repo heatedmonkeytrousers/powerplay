@@ -14,10 +14,28 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
+import org.opencv.videoio.VideoCapture;
 
 @TeleOp (name="Camera", group="Linear Opmode")
 public class Camera extends LinearOpMode{
     OpenCvWebcam webcam;
+
+    class SubmatPipeline extends OpenCvPipeline {
+
+        Mat submat;
+
+        public void init(Mat firstFrame)
+        {
+            submat = firstFrame.submat(0,50,0,50);
+        }
+        @Override
+        public Mat processFrame(Mat input) {
+            // Because a submat is a persistent reference to a region of the parent buffer,
+            // (which in this case is `input`) any changes to `input` will be reflected in
+            // the submat (and vice versa).
+            return submat;
+        }
+    }
 
     @Override
     public void runOpMode() {
@@ -33,7 +51,7 @@ public class Camera extends LinearOpMode{
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                //webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -59,6 +77,7 @@ public class Camera extends LinearOpMode{
              * Send some stats to the telemetry
              */
             telemetry.addData("Frame Count", webcam.getFrameCount());
+
             telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
             telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
             telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
@@ -90,6 +109,7 @@ public class Camera extends LinearOpMode{
         boolean viewportPaused;
 
         @Override
+
         public Mat processFrame(Mat input)
         {
             /*
@@ -123,7 +143,7 @@ public class Camera extends LinearOpMode{
 
             if(viewportPaused)
             {
-                webcam.pauseViewport();
+                //webcam.pauseViewport
             }
             else
             {
