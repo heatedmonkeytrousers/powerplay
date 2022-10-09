@@ -33,17 +33,16 @@ public class Camera extends LinearOpMode{
             public void onOpened()
             {
                 webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-
             }
 
             @Override
             public void onError(int errorCode)
             {
-
+                /*
+                 * This will be called if the camera could not be opened
+                 */
             }
-
         });
-
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
@@ -74,6 +73,7 @@ public class Camera extends LinearOpMode{
             if(gamepad1.a)
             {
                 webcam.stopStreaming();
+                //webcam.closeCameraDevice();
             }
 
             /*
@@ -93,8 +93,8 @@ public class Camera extends LinearOpMode{
         public Mat processFrame(Mat input)
         {
             /*
-             * Draw a simple box around the middle 1/2 of the entire frame4 */
-
+             * Draw a simple box around the middle 1/2 of the entire frame
+             */
             Imgproc.rectangle(
                     input,
                     new Point(
@@ -105,8 +105,7 @@ public class Camera extends LinearOpMode{
                             input.rows()*(3f/4f)),
                     new Scalar(0, 255, 0), 4);
 
-
-            /*
+            /**
              * NOTE: to see how to get data from your pipeline to your OpMode as well as how
              * to change which stage of the pipeline is rendered to the viewport when it is
              * tapped, please see {@link PipelineStageSwitchingExample}
@@ -125,7 +124,6 @@ public class Camera extends LinearOpMode{
             if(viewportPaused)
             {
                 webcam.pauseViewport();
-
             }
             else
             {
