@@ -18,6 +18,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 @TeleOp (name="Process", group="Linear Opmode")
 public class Process extends LinearOpMode{
+
     OpenCvWebcam webcam;
 
     SkystoneDeterminationPipeline pipeline;

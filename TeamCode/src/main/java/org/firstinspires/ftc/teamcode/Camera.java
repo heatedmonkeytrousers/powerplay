@@ -55,7 +55,6 @@ public class Camera extends LinearOpMode{
 
         while (opModeIsActive())
         {
-
             /*
              * Send some stats to the telemetry
              */
