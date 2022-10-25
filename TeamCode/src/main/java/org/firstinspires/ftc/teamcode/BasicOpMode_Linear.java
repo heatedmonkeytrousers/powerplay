@@ -60,6 +60,13 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor rearLeftDrive = null;
     private DcMotor rearRightDrive = null;
+   //new
+    public static double MOTOR_PPR = 384.5;
+    private int     frontLeftTotalCounts = 0;
+    private int     frontRightTotalCounts = 0;
+    private int     rearLeftTotalCounts = 0;
+    private int     rearRightTotalCounts = 0;
+
 
     @Override
     public void runOpMode() {
@@ -82,6 +89,20 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
+        //new
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //new2
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rearLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        rearRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -94,6 +115,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double frontRightPower;
             double rearLeftPower;
             double rearRightPower;
+            //new
+            double totalDistance;
 
             // POV Mode uses left stick to go forward and strafe, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
@@ -111,6 +134,21 @@ public class BasicOpMode_Linear extends LinearOpMode {
             frontRightDrive.setPower(frontRightPower);
             rearRightDrive.setPower(rearRightPower);
 
+            //new
+            frontLeftDrive.setPower(frontLeftPower);
+            //new2
+            frontRightDrive.setPower(frontRightPower);
+            rearLeftDrive.setPower(rearLeftPower);
+            rearRightDrive.setPower(rearRightPower);
+
+            //new
+            frontLeftTotalCounts = frontLeftDrive.getCurrentPosition();
+            totalDistance = frontLeftTotalCounts / MOTOR_PPR;
+            //new2
+            frontRightTotalCounts = frontRightDrive.getCurrentPosition();
+            rearLeftTotalCounts = rearLeftDrive.getCurrentPosition();
+            rearRightTotalCounts = rearRightDrive.getCurrentPosition();
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
@@ -118,6 +156,14 @@ public class BasicOpMode_Linear extends LinearOpMode {
             telemetry.addData("Left Stick", "x (%.2f), y (%.2f)", gamepad1.left_stick_x, gamepad1.left_stick_y);
             telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
             telemetry.addData("D-PAD", "l (%b), r (%b)", gamepad1.dpad_left, gamepad1.dpad_right);
+            //new
+            telemetry.addData("Encoder Count", "(%7d)", frontLeftTotalCounts);
+            telemetry.addData("Num Rotations", "(%.2f)", totalDistance);
+            //
+            //new2
+            telemetry.addData("Encoder Count", "(%7d)", frontRightTotalCounts);
+            telemetry.addData("Encoder Count", "(%7d)", rearLeftTotalCounts);
+            telemetry.addData("Encoder Count", "(%7d)", rearRightTotalCounts);
             telemetry.update();
         }
     }
