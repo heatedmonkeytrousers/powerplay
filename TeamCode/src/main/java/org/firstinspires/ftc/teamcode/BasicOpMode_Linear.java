@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -60,13 +61,14 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor rearLeftDrive = null;
     private DcMotor rearRightDrive = null;
-   //new
+
     public static double MOTOR_PPR = 384.5;
     private int     frontLeftTotalCounts = 0;
     private int     frontRightTotalCounts = 0;
     private int     rearLeftTotalCounts = 0;
     private int     rearRightTotalCounts = 0;
 
+    private DcMotor elevatorDrive = null;
 
     @Override
     public void runOpMode() {
@@ -80,6 +82,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
         rearLeftDrive  = hardwareMap.get(DcMotor.class, "rearLeftDrive");
         rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightDrive");
+        elevatorDrive = hardwareMap.get(DcMotor.class, "elevatorDrive");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -88,6 +91,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        elevatorDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //new
         frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -115,7 +119,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double frontRightPower;
             double rearLeftPower;
             double rearRightPower;
-            //new
+            double elevatorPower = gamepad1.left_trigger - gamepad1. right_trigger;
+
             double totalDistance;
 
             // POV Mode uses left stick to go forward and strafe, and right stick to turn.
@@ -127,12 +132,14 @@ public class BasicOpMode_Linear extends LinearOpMode {
             rearLeftPower    = Range.clip(drive + turn + strafe, -1.0, 1.0);
             frontRightPower   = Range.clip(drive - turn + strafe, -1.0, 1.0);
             rearRightPower   = Range.clip(drive - turn - strafe, -1.0, 1.0);
+            elevatorPower  = Range.clip(elevatorPower, -0.1, 0.1);
 
             // Send calculated power to wheels
             frontLeftDrive.setPower(frontLeftPower);
             rearLeftDrive.setPower(rearLeftPower);
             frontRightDrive.setPower(frontRightPower);
             rearRightDrive.setPower(rearRightPower);
+            elevatorDrive.setPower(elevatorPower);
 
             //new
             frontLeftDrive.setPower(frontLeftPower);
@@ -156,6 +163,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             telemetry.addData("Left Stick", "x (%.2f), y (%.2f)", gamepad1.left_stick_x, gamepad1.left_stick_y);
             telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
             telemetry.addData("D-PAD", "l (%b), r (%b)", gamepad1.dpad_left, gamepad1.dpad_right);
+            telemetry.addData("elevatorPower","(power %.2f)", elevatorPower);
             //new
             telemetry.addData("Encoder Count", "(%7d)", frontLeftTotalCounts);
             telemetry.addData("Num Rotations", "(%.2f)", totalDistance);
