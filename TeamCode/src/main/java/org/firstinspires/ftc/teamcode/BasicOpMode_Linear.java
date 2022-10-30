@@ -127,28 +127,17 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             totalCounts = elevatorDrive.getCurrentPosition();
             totalDistance = totalCounts / MOTOR_PPR;
+            DcMotor.RunMode oldMode = elevatorDrive.getMode();
+            elevatorDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             if (gamepad1.a) {
                 elevatorDrive.setPower(1);
-                while (totalCounts < 0) {
-                    totalCounts = elevatorDrive.getCurrentPosition();
-                    if (gamepad1.start) {
-                        elevatorDrive.setPower(0);
-                        break;
-                    }
-                }
-                elevatorDrive.setPower(0);
+                elevatorDrive.setTargetPosition(0);
+                //elevatorDrive.setPower(0);
 
             } else if (gamepad1.b) {
                 elevatorDrive.setPower(-1);
-                while (totalCounts > -3941) {
-                    totalCounts = elevatorDrive.getCurrentPosition();
-                    if (gamepad1.start) {
-                        elevatorDrive.setPower(0);
-                        break;
-                    }
-                }
-                elevatorDrive.setPower(0);
+                elevatorDrive.setPower(-3941);
 
             } else if (gamepad1.x) {
                 elevatorDrive.setPower(-1);
@@ -171,6 +160,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                     }
                 }
                 elevatorDrive.setPower(0);
+                elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
                 // Show the elapsed game time and wheel power.
                 telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -182,6 +172,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 telemetry.addData("elevatorPower", "(power %.2f)", elevatorPower);
                 telemetry.addData("Encoder Count", "(%7d)", totalCounts);
                 telemetry.addData("Num Rotations", "(%.2f)", totalDistance);
+                telemetry.addData("Elevator Mode", elevatorDrive.getMode());
                 telemetry.update();
             }
         }
