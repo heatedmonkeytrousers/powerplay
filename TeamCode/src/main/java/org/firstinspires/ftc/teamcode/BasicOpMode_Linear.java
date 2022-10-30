@@ -129,19 +129,20 @@ public class BasicOpMode_Linear extends LinearOpMode {
             totalDistance = totalCounts / MOTOR_PPR;
 
             if (gamepad1.a) {
-                elevatorDrive.setPower(1);
-                while (totalCounts < 0) {
+                elevatorDrive.setPower(-1);
+                while (totalCounts > 0) {
                     totalCounts = elevatorDrive.getCurrentPosition();
                     if (gamepad1.start) {
                         elevatorDrive.setPower(0);
                         break;
                     }
                 }
+                elevatorDrive.setMode(Run)
                 elevatorDrive.setPower(0);
 
             } else if (gamepad1.b) {
-                elevatorDrive.setPower(-1);
-                while (totalCounts > -3941) {
+                elevatorDrive.setPower(1);
+                while (totalCounts < 3941) {
                     totalCounts = elevatorDrive.getCurrentPosition();
                     if (gamepad1.start) {
                         elevatorDrive.setPower(0);
@@ -151,8 +152,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 elevatorDrive.setPower(0);
 
             } else if (gamepad1.x) {
-                elevatorDrive.setPower(-1);
-                while (totalCounts > -6647) {
+                elevatorDrive.setPower(1);
+                while (totalCounts < 6647) {
                     totalCounts = elevatorDrive.getCurrentPosition();
                     if (gamepad1.start) {
                         elevatorDrive.setPower(0);
@@ -162,8 +163,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 elevatorDrive.setPower(0);
 
             } else if (gamepad1.y) {
-                elevatorDrive.setPower(-1);
-                while (totalCounts > -10000) {
+                elevatorDrive.setPower(1);
+                while (totalCounts < 10000) {
                     totalCounts = elevatorDrive.getCurrentPosition();
                     if (gamepad1.start) {
                         elevatorDrive.setPower(0);
