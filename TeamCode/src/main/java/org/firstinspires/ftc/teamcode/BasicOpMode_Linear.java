@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -62,6 +63,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor rearLeftDrive = null;
     private DcMotor rearRightDrive = null;
     private DcMotor elevatorDrive = null;
+    private Servo claw = null;
     public static double MOTOR_PPR = 384.5;
     private int totalCounts = 0;
 
@@ -77,7 +79,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive"); //ch2
         rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftDrive"); //ch1
         rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightDrive"); //ch0
-        elevatorDrive = hardwareMap.get(DcMotor.class, "elevatorDrive"); //eh3
+        elevatorDrive = hardwareMap.get(DcMotor.class, "elevatorDrive"); //ch3
+        claw = hardwareMap.get(Servo.class, "claw"); //eh0
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -87,6 +90,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
         elevatorDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        claw.setDirection(Servo.Direction.FORWARD);
 
         elevatorDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -127,18 +131,31 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             totalCounts = elevatorDrive.getCurrentPosition();
             totalDistance = totalCounts / MOTOR_PPR;
-            DcMotor.RunMode oldMode = elevatorDrive.getMode();
-            elevatorDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            // The set buttons for the elevators highs
             if (gamepad1.a) {
-                elevatorDrive.setPower(1);
-                elevatorDrive.setTargetPosition(0);
-                //elevatorDrive.setPower(0);
+                elevatorDrive.setPower(-1);
+                while (totalCounts > 0) {
+                    totalCounts = elevatorDrive.getCurrentPosition();
+                    if (gamepad1.start) {
+                        elevatorDrive.setPower(0);
+                        break;
+                    }
+                }
+                elevatorDrive.setPower(0.1);
+                while (totalCounts < 0) {
+                    totalCounts = elevatorDrive.getCurrentPosition();
+                }
 
             } else if (gamepad1.b) {
-                elevatorDrive.setPower(-1);
-                elevatorDrive.setPower(-3941);
-
+                elevatorDrive.setPower(1);
+                while (totalCounts < 3941) {
+                    totalCounts = elevatorDrive.getCurrentPosition();
+                    if (gamepad1.start) {
+                        elevatorDrive.setPower(0);
+                        break;
+                    }
+                }
             } else if (gamepad1.x) {
                 elevatorDrive.setPower(1);
                 while (totalCounts < 6647) {
@@ -148,33 +165,32 @@ public class BasicOpMode_Linear extends LinearOpMode {
                         break;
                     }
                 }
-                elevatorDrive.setPower(0);
+
 
             } else if (gamepad1.y) {
                 elevatorDrive.setPower(1);
-                while (totalCounts < 10000) {
+                while (totalCounts < 9000) {
                     totalCounts = elevatorDrive.getCurrentPosition();
                     if (gamepad1.start) {
                         elevatorDrive.setPower(0);
                         break;
                     }
                 }
-                elevatorDrive.setPower(0);
-                elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-                // Show the elapsed game time and wheel power.
-                telemetry.addData("Status", "Run Time: " + runtime.toString());
-                telemetry.addData("Front Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
-                telemetry.addData("Rear Motors", "left (%.2f), right (%.2f)", rearLeftPower, rearRightPower);
-                telemetry.addData("Left Stick", "x (%.2f), y (%.2f)", gamepad1.left_stick_x, gamepad1.left_stick_y);
-                telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
-                telemetry.addData("D-PAD", "l (%b), r (%b)", gamepad1.dpad_left, gamepad1.dpad_right);
-                telemetry.addData("elevatorPower", "(power %.2f)", elevatorPower);
-                telemetry.addData("Encoder Count", "(%7d)", totalCounts);
-                telemetry.addData("Num Rotations", "(%.2f)", totalDistance);
-                telemetry.addData("Elevator Mode", elevatorDrive.getMode());
-                telemetry.update();
             }
+
+
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Front Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
+            telemetry.addData("Rear Motors", "left (%.2f), right (%.2f)", rearLeftPower, rearRightPower);
+            telemetry.addData("Left Stick", "x (%.2f), y (%.2f)", gamepad1.left_stick_x, gamepad1.left_stick_y);
+            telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
+            telemetry.addData("D-PAD", "l (%b), r (%b)", gamepad1.dpad_left, gamepad1.dpad_right);
+            telemetry.addData("elevatorPower", "(power %.2f)", elevatorPower);
+            telemetry.addData("Encoder Count", "(%7d)", totalCounts);
+            telemetry.addData("Num Rotations", "(%.2f)", totalDistance);
+            telemetry.addData("Servo Angle", "(%.2f)", claw.getPosition());
+            telemetry.update();
         }
     }
 }
