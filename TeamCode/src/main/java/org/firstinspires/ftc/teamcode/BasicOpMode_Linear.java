@@ -67,6 +67,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
     public static double MOTOR_PPR = 384.5;
     private int totalCounts = 0;
 
+    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;     // Minimum rotational position
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -81,6 +85,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightDrive"); //ch0
         elevatorDrive = hardwareMap.get(DcMotor.class, "elevatorDrive"); //ch3
         claw = hardwareMap.get(Servo.class, "claw"); //eh0
+
+        double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -177,9 +183,27 @@ public class BasicOpMode_Linear extends LinearOpMode {
                     }
                 }
             }
+            if (gamepad1.dpad_left) {
+                //double oldPosition = claw.getPosition();
+                //claw.setPosition(oldPosition - 0.01);
+                position += INCREMENT ;
+                if (position >= MAX_POS ) {
+                    position = MAX_POS;
+                }
+            } else if (gamepad1.dpad_right) {
+                //double oldPosition = claw.getPosition();
+                //claw.setPosition(oldPosition + 0.01);
+                position -= INCREMENT ;
+                if (position <= MIN_POS ) {
+                    position = MIN_POS;
+                }
+            }
 
+            claw.setPosition(position);
 
             // Show the elapsed game time and wheel power.
+            telemetry.addData("Servo Angle", "(%.2f)", claw.getPosition());
+            telemetry.addData("Servo Position", "%5.2f", position);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
             telemetry.addData("Rear Motors", "left (%.2f), right (%.2f)", rearLeftPower, rearRightPower);
@@ -189,7 +213,6 @@ public class BasicOpMode_Linear extends LinearOpMode {
             telemetry.addData("elevatorPower", "(power %.2f)", elevatorPower);
             telemetry.addData("Encoder Count", "(%7d)", totalCounts);
             telemetry.addData("Num Rotations", "(%.2f)", totalDistance);
-            telemetry.addData("Servo Angle", "(%.2f)", claw.getPosition());
             telemetry.update();
         }
     }
