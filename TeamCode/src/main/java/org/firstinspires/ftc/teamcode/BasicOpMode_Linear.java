@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -37,6 +36,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.checkerframework.checker.units.qual.C;
 
 
 /**
@@ -53,7 +54,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-//@Disabled
+
 public class BasicOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members.
@@ -63,13 +64,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor rearLeftDrive = null;
     private DcMotor rearRightDrive = null;
     private DcMotor elevatorDrive = null;
-    private Servo claw = null;
-    public static double MOTOR_PPR = 384.5;
-    private int totalCounts = 0;
-
-    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
+    private Servo clawServo = null;
 
     @Override
     public void runOpMode() {
@@ -84,9 +79,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftDrive"); //ch1
         rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightDrive"); //ch0
         elevatorDrive = hardwareMap.get(DcMotor.class, "elevatorDrive"); //ch3
-        claw = hardwareMap.get(Servo.class, "claw"); //eh0
+        clawServo = hardwareMap.get(Servo.class, "claw"); //eh0
 
-        double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -96,15 +90,23 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
         elevatorDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        claw.setDirection(Servo.Direction.FORWARD);
+        clawServo.setDirection(Servo.Direction.FORWARD);
 
         elevatorDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Wait for the game to start (driver presses PLAY)
         elevatorDrive.setTargetPosition(0);
+        clawServo.setPosition(0.1);
         waitForStart();
         runtime.reset();
+
+        //Launch Threads
+
+        Elevator elevator = new Elevator(elevatorDrive, gamepad1);
+        elevator.start();
+        Claw claw = new Claw(clawServo, gamepad1);
+        claw.start();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -114,8 +116,6 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double frontRightPower;
             double rearLeftPower;
             double rearRightPower;
-            double totalDistance;
-            double elevatorPower = gamepad1.left_trigger - gamepad1.right_trigger;
 
             // POV Mode uses left stick to go forward and strafe, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
@@ -126,94 +126,35 @@ public class BasicOpMode_Linear extends LinearOpMode {
             rearLeftPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
             frontRightPower = Range.clip(drive - turn + strafe, -1.0, 1.0);
             rearRightPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
-            elevatorPower = Range.clip(elevatorPower, -1.0, 1.5);
+
 
             // Send calculated power to wheels
             frontLeftDrive.setPower(frontLeftPower);
             rearLeftDrive.setPower(rearLeftPower);
             frontRightDrive.setPower(frontRightPower);
             rearRightDrive.setPower(rearRightPower);
-            elevatorDrive.setPower(elevatorPower);
-
-            totalCounts = elevatorDrive.getCurrentPosition();
-            totalDistance = totalCounts / MOTOR_PPR;
-
-            // The set buttons for the elevators highs
-            if (gamepad1.a) {
-                elevatorDrive.setPower(-1);
-                while (totalCounts > 0) {
-                    totalCounts = elevatorDrive.getCurrentPosition();
-                    if (gamepad1.start) {
-                        elevatorDrive.setPower(0);
-                        break;
-                    }
-                }
-                elevatorDrive.setPower(0.1);
-                while (totalCounts < 0) {
-                    totalCounts = elevatorDrive.getCurrentPosition();
-                }
-
-            } else if (gamepad1.b) {
-                elevatorDrive.setPower(1);
-                while (totalCounts < 3941) {
-                    totalCounts = elevatorDrive.getCurrentPosition();
-                    if (gamepad1.start) {
-                        elevatorDrive.setPower(0);
-                        break;
-                    }
-                }
-            } else if (gamepad1.x) {
-                elevatorDrive.setPower(1);
-                while (totalCounts < 6647) {
-                    totalCounts = elevatorDrive.getCurrentPosition();
-                    if (gamepad1.start) {
-                        elevatorDrive.setPower(0);
-                        break;
-                    }
-                }
 
 
-            } else if (gamepad1.y) {
-                elevatorDrive.setPower(1);
-                while (totalCounts < 9000) {
-                    totalCounts = elevatorDrive.getCurrentPosition();
-                    if (gamepad1.start) {
-                        elevatorDrive.setPower(0);
-                        break;
-                    }
-                }
-            }
-            if (gamepad1.dpad_left) {
-                //double oldPosition = claw.getPosition();
-                //claw.setPosition(oldPosition - 0.01);
-                position += INCREMENT ;
-                if (position >= MAX_POS ) {
-                    position = MAX_POS;
-                }
-            } else if (gamepad1.dpad_right) {
-                //double oldPosition = claw.getPosition();
-                //claw.setPosition(oldPosition + 0.01);
-                position -= INCREMENT ;
-                if (position <= MIN_POS ) {
-                    position = MIN_POS;
-                }
-            }
 
-            claw.setPosition(position);
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Servo Angle", "(%.2f)", claw.getPosition());
-            telemetry.addData("Servo Position", "%5.2f", position);
+            telemetry.addData("Servo Angle", "(%.2f)", clawServo.getPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
             telemetry.addData("Rear Motors", "left (%.2f), right (%.2f)", rearLeftPower, rearRightPower);
             telemetry.addData("Left Stick", "x (%.2f), y (%.2f)", gamepad1.left_stick_x, gamepad1.left_stick_y);
             telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
-            telemetry.addData("D-PAD", "l (%b), r (%b)", gamepad1.dpad_left, gamepad1.dpad_right);
-            telemetry.addData("elevatorPower", "(power %.2f)", elevatorPower);
-            telemetry.addData("Encoder Count", "(%7d)", totalCounts);
-            telemetry.addData("Num Rotations", "(%.2f)", totalDistance);
+            telemetry.addData("Elevator Count", "(%7d)", elevator.getTotalCounts());
+            telemetry.addData("Elevator Mode", elevatorDrive.getMode());
             telemetry.update();
+        }
+        elevator.interrupt();
+        claw.interrupt();
+        try {
+            elevator.join();
+            claw.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
@@ -221,6 +162,6 @@ public class BasicOpMode_Linear extends LinearOpMode {
 //Start
 //B button: -3941
 //X button: -6647
-//Y button: -10000
+//Y button: -9600
 
 
