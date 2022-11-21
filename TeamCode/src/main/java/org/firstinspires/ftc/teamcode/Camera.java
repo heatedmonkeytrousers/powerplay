@@ -4,8 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -14,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp (name="Camera", group="Linear Opmode")
+@TeleOp //(name="Camera", group="Linear Opmode")
 public class Camera extends LinearOpMode{
     OpenCvWebcam webcam;
 
@@ -43,13 +45,13 @@ public class Camera extends LinearOpMode{
                  */
             }
         });
-
         telemetry.addLine("Waiting for start");
         telemetry.update();
 
         /*
          * Wait for the user to press start on the Driver Station
          */
+
         waitForStart();
 
         while (opModeIsActive())

@@ -98,6 +98,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         elevatorDrive.setTargetPosition(0);
         clawServo.setPosition(0.1);
+
         waitForStart();
         runtime.reset();
 
@@ -107,41 +108,15 @@ public class BasicOpMode_Linear extends LinearOpMode {
         elevator.start();
         Claw claw = new Claw(clawServo, gamepad1);
         claw.start();
+        Motion motion = new Motion(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, gamepad1);
+        motion.start();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double frontLeftPower;
-            double frontRightPower;
-            double rearLeftPower;
-            double rearRightPower;
-
-            // POV Mode uses left stick to go forward and strafe, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
-            double turn = -gamepad1.right_stick_x;
-            frontLeftPower = Range.clip(drive + turn - strafe, -1.0, 1.0);
-            rearLeftPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
-            frontRightPower = Range.clip(drive - turn + strafe, -1.0, 1.0);
-            rearRightPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
-
-
-            // Send calculated power to wheels
-            frontLeftDrive.setPower(frontLeftPower);
-            rearLeftDrive.setPower(rearLeftPower);
-            frontRightDrive.setPower(frontRightPower);
-            rearRightDrive.setPower(rearRightPower);
-
-
-
-
             // Show the elapsed game time and wheel power.
             telemetry.addData("Servo Angle", "(%.2f)", clawServo.getPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
-            telemetry.addData("Rear Motors", "left (%.2f), right (%.2f)", rearLeftPower, rearRightPower);
             telemetry.addData("Left Stick", "x (%.2f), y (%.2f)", gamepad1.left_stick_x, gamepad1.left_stick_y);
             telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
             telemetry.addData("Elevator Count", "(%7d)", elevator.getTotalCounts());
@@ -150,9 +125,11 @@ public class BasicOpMode_Linear extends LinearOpMode {
         }
         elevator.interrupt();
         claw.interrupt();
+        motion.interrupt();
         try {
             elevator.join();
             claw.join();
+            motion.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
