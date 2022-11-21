@@ -29,13 +29,15 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.checkerframework.checker.units.qual.C;
 
 
 /**
@@ -52,7 +54,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-//@Disabled
+
 public class BasicOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members.
@@ -61,14 +63,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor rearLeftDrive = null;
     private DcMotor rearRightDrive = null;
-
-    public static double MOTOR_PPR = 384.5;
-    private int     frontLeftTotalCounts = 0;
-    private int     frontRightTotalCounts = 0;
-    private int     rearLeftTotalCounts = 0;
-    private int     rearRightTotalCounts = 0;
-
     private DcMotor elevatorDrive = null;
+    private Servo clawServo = null;
 
     @Override
     public void runOpMode() {
@@ -78,11 +74,13 @@ public class BasicOpMode_Linear extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        frontLeftDrive  = hardwareMap.get(DcMotor.class, "frontLeftDrive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
-        rearLeftDrive  = hardwareMap.get(DcMotor.class, "rearLeftDrive");
-        rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightDrive");
-        elevatorDrive = hardwareMap.get(DcMotor.class, "elevatorDrive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftDrive"); //ch3
+        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive"); //ch2
+        rearLeftDrive = hardwareMap.get(DcMotor.class, "rearLeftDrive"); //ch1
+        rearRightDrive = hardwareMap.get(DcMotor.class, "rearRightDrive"); //ch0
+        elevatorDrive = hardwareMap.get(DcMotor.class, "elevatorDrive"); //ch3
+        clawServo = hardwareMap.get(Servo.class, "claw"); //eh0
+
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -91,91 +89,56 @@ public class BasicOpMode_Linear extends LinearOpMode {
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         rearLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         rearRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        elevatorDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        elevatorDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        clawServo.setDirection(Servo.Direction.FORWARD);
 
-        //new
-        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //new2
-        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        rearLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        rearRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //
+        elevatorDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Wait for the game to start (driver presses PLAY)
+        elevatorDrive.setTargetPosition(0);
+        clawServo.setPosition(0.1);
+
         waitForStart();
         runtime.reset();
+
+        //Launch Threads
+
+        Elevator elevator = new Elevator(elevatorDrive, gamepad1);
+        elevator.start();
+        Claw claw = new Claw(clawServo, gamepad1);
+        claw.start();
+        Motion motion = new Motion(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, gamepad1);
+        motion.start();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double frontLeftPower;
-            double frontRightPower;
-            double rearLeftPower;
-            double rearRightPower;
-            double elevatorPower = gamepad1.left_trigger - gamepad1. right_trigger;
-
-            double totalDistance;
-
-            // POV Mode uses left stick to go forward and strafe, and right stick to turn.
-            // - This uses basic math to combine motions and is easier to drive straight.
-            double drive = gamepad1.left_stick_y;
-            double strafe = gamepad1.left_stick_x;
-            double turn  = -gamepad1.right_stick_x;
-            frontLeftPower    = Range.clip(drive + turn - strafe, -1.0, 1.0);
-            rearLeftPower    = Range.clip(drive + turn + strafe, -1.0, 1.0);
-            frontRightPower   = Range.clip(drive - turn + strafe, -1.0, 1.0);
-            rearRightPower   = Range.clip(drive - turn - strafe, -1.0, 1.0);
-            elevatorPower  = Range.clip(elevatorPower, -0.1, 0.1);
-
-            // Send calculated power to wheels
-            frontLeftDrive.setPower(frontLeftPower);
-            rearLeftDrive.setPower(rearLeftPower);
-            frontRightDrive.setPower(frontRightPower);
-            rearRightDrive.setPower(rearRightPower);
-            elevatorDrive.setPower(elevatorPower);
-
-            //new
-            frontLeftDrive.setPower(frontLeftPower);
-            //new2
-            frontRightDrive.setPower(frontRightPower);
-            rearLeftDrive.setPower(rearLeftPower);
-            rearRightDrive.setPower(rearRightPower);
-
-            //new
-            frontLeftTotalCounts = frontLeftDrive.getCurrentPosition();
-            totalDistance = frontLeftTotalCounts / MOTOR_PPR;
-            //new2
-            frontRightTotalCounts = frontRightDrive.getCurrentPosition();
-            rearLeftTotalCounts = rearLeftDrive.getCurrentPosition();
-            rearRightTotalCounts = rearRightDrive.getCurrentPosition();
-
-            frontLeftTotalCounts + rearLeftTotalCounts + frontRightTotalCounts + rearRightTotalCounts /4 =
-
             // Show the elapsed game time and wheel power.
+            telemetry.addData("Servo Angle", "(%.2f)", clawServo.getPosition());
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front Motors", "left (%.2f), right (%.2f)", frontLeftPower, frontRightPower);
-            telemetry.addData("Rear Motors", "left (%.2f), right (%.2f)", rearLeftPower, rearRightPower);
             telemetry.addData("Left Stick", "x (%.2f), y (%.2f)", gamepad1.left_stick_x, gamepad1.left_stick_y);
             telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
-            telemetry.addData("D-PAD", "l (%b), r (%b)", gamepad1.dpad_left, gamepad1.dpad_right);
-            telemetry.addData("elevatorPower","(power %.2f)", elevatorPower);
-            //new
-            telemetry.addData("Encoder Count", "(%7d)", frontLeftTotalCounts);
-            telemetry.addData("Num Rotations", "(%.2f)", totalDistance);
-            //
-            //new2
-            telemetry.addData("Encoder Count", "(%7d)", frontRightTotalCounts);
-            telemetry.addData("Encoder Count", "(%7d)", rearLeftTotalCounts);
-            telemetry.addData("Encoder Count", "(%7d)", rearRightTotalCounts);
+            telemetry.addData("Elevator Count", "(%7d)", elevator.getTotalCounts());
+            telemetry.addData("Elevator Mode", elevatorDrive.getMode());
             telemetry.update();
+        }
+        elevator.interrupt();
+        claw.interrupt();
+        motion.interrupt();
+        try {
+            elevator.join();
+            claw.join();
+            motion.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
+
+//Start
+//B button: -3941
+//X button: -6647
+//Y button: -9600
+
 
