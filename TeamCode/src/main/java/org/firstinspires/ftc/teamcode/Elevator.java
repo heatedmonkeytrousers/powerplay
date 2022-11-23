@@ -13,12 +13,17 @@ public class Elevator extends Thread {
     private int totalCounts;
     private Gamepad gamepad;
 
+    private Motion motion;
+
     public Elevator(DcMotor elevatorDrive, Gamepad gamepad) {
         this.elevatorDrive = elevatorDrive;
         this.gamepad = gamepad;
     }
     public int getTotalCounts() {
         return totalCounts;
+    }
+    public boolean isUp() {
+        return elevatorDrive.getCurrentPosition() > LOW_POSITION;
     }
     @Override
     public void run() {

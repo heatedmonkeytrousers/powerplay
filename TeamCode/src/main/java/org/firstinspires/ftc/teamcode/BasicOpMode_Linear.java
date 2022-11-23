@@ -108,7 +108,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         elevator.start();
         Claw claw = new Claw(clawServo, gamepad1);
         claw.start();
-        Motion motion = new Motion(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, gamepad1);
+        Motion motion = new Motion(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, gamepad1, elevator);
         motion.start();
 
         // run until the end of the match (driver presses STOP)

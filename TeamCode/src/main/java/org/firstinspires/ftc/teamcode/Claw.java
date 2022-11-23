@@ -18,28 +18,25 @@ public class Claw extends  Thread {
     @Override
     public void run() {
         while(!isInterrupted()) {
-            //org.firstinspires.ftc.teamcode.Claw Code
+            double position = clawServo.getPosition();
             if (gamepad.dpad_left) {
-                double position = clawServo.getPosition();
                 position += INCREMENT ;
-                clawServo.setPosition(position);
-                if (position <= MIN_POS ) {
-                    position = MIN_POS;
-                }
-                if (position >= MAX_POS ) {
-                    position = MAX_POS;
-                }
             } else if (gamepad.dpad_right) {
-                double position = clawServo.getPosition();
                 position -= INCREMENT ;
-                clawServo.setPosition(position);
-                if (position <= MIN_POS ) {
-                    position = MIN_POS;
-                }
-                if (position >= MAX_POS ) {
-                    position = MAX_POS;
-                }
             }
+            if (gamepad.left_bumper) {
+                position = MAX_POS;
+            }
+            if(gamepad.right_bumper) {
+                position = MIN_POS;
+            }
+            if (position <= MIN_POS ) {
+                position = MIN_POS;
+            }
+            if (position >= MAX_POS ) {
+                position = MAX_POS;
+            }
+            clawServo.setPosition(position);
         }
     }
 }
