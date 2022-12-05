@@ -12,6 +12,8 @@ public class Motion extends Thread{
     private static int TRANSLATE_FB = 1106;
     private static int TRANSLATE_LR = 1200;
 
+    private static int ROTATE_360 = 3832;
+
     private static double PF = 0.5;
 
     private DcMotor frontLeftDrive;
@@ -143,4 +145,68 @@ public class Motion extends Thread{
         rearLeftDrive.setMode(rearLeftMode);
         rearRightDrive.setMode(rearRightMode);
     }
+
+    public void rotation (Direction direction, double angle) {
+
+        int rotation = (int)(ROTATE_360 * angle / 360);
+
+        // Get the currentModes
+        DcMotor.RunMode frontLeftMode = frontLeftDrive.getMode();
+        DcMotor.RunMode frontRightMode = frontRightDrive.getMode();
+        DcMotor.RunMode rearRightMode = rearRightDrive.getMode();
+        DcMotor.RunMode rearLeftMode = rearLeftDrive.getMode();
+
+        // Get current positions
+        int frontLeftPosition = frontLeftDrive.getCurrentPosition();
+        int frontRightPosition = frontRightDrive.getCurrentPosition();
+        int rearRightPosition = rearRightDrive.getCurrentPosition();
+        int rearLeftPosition = rearLeftDrive.getCurrentPosition();
+
+        // Determine power
+        switch(direction){
+            case FORWARD:
+            case RIGHT:
+
+                frontLeftPosition -= ROTATE_360;
+                frontRightPosition += ROTATE_360;
+                rearLeftPosition -= ROTATE_360;
+                rearRightPosition += ROTATE_360;
+                break;
+
+            case BACKWARD:
+            case LEFT:
+
+                frontLeftPosition += ROTATE_360;
+                frontRightPosition -= ROTATE_360;
+                rearLeftPosition += ROTATE_360;
+                rearRightPosition -= ROTATE_360;
+                break;
+
+            default:
+                // We should never get here!
+                return;
+        }
+
+        // Move until new positions
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeftDrive.setTargetPosition(frontLeftPosition);
+        frontRightDrive.setTargetPosition(frontRightPosition);
+        rearLeftDrive.setTargetPosition(rearLeftPosition);
+        rearRightDrive.setTargetPosition(rearRightPosition);
+
+        // will wait till in position
+        while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()){}
+
+        // reset mode
+        frontLeftDrive.setMode(frontLeftMode);
+        frontRightDrive.setMode(frontRightMode);
+        rearLeftDrive.setMode(rearLeftMode);
+        rearRightDrive.setMode(rearRightMode);
+
+    }
 }
+
+
