@@ -9,6 +9,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -34,7 +35,7 @@ public class Camera extends LinearOpMode{
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(160, 120, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -97,9 +98,10 @@ public class Camera extends LinearOpMode{
             /*
              * Draw a simple box around the middle 1/2 of the entire frame
              */
+
             Imgproc.rectangle(
                     input,
-                    new Point(
+                    new Point (
                             input.cols()/4,
                             input.rows()/4),
                     new Point(
@@ -107,13 +109,17 @@ public class Camera extends LinearOpMode{
                             input.rows()*(3f/4f)),
                     new Scalar(0, 255, 0), 4);
 
-            /**
+            /*
              * NOTE: to see how to get data from your pipeline to your OpMode as well as how
              * to change which stage of the pipeline is rendered to the viewport when it is
              * tapped, please see {@link PipelineStageSwitchingExample}
              */
-
+            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2GRAY);
+            Imgproc.threshold(input, input, 111, 255, Imgproc.THRESH_BINARY);
+            telemetry.addData("White pixels", Core.countNonZero(input));
+            telemetry.update();
             return input;
+
         }
 
         @Override
