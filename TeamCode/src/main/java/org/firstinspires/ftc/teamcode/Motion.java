@@ -9,6 +9,9 @@ public class Motion extends Thread{
     private static int MIDDLE_POSITION = 6647;
     private static int HIGH_POSITION = 9700;
 
+    private static int TRANSLATE_FB = 1106;
+    private static int TRANSLATE_LR = 1200;
+
     private static double PF = 0.5;
 
     private DcMotor frontLeftDrive;
@@ -19,6 +22,14 @@ public class Motion extends Thread{
 
     private Elevator elevator;
     private int totalCounts;
+
+    private enum Direction
+    {
+        FORWARD,
+        RIGHT,
+        BACKWARD,
+        LEFT
+    }
 
     public Motion (DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor rearLeftDrive, DcMotor rearRightDrive, Gamepad gamepad, Elevator elevator) {
         this.frontLeftDrive = frontLeftDrive;
@@ -61,5 +72,75 @@ public class Motion extends Thread{
             frontRightDrive.setPower(frontRightPower);
             rearRightDrive.setPower(rearRightPower);
         }
+    }
+
+    public void translate(Direction direction)
+    {
+        // Get the currentModes
+        DcMotor.RunMode frontLeftMode = frontLeftDrive.getMode();
+        DcMotor.RunMode frontRightMode = frontRightDrive.getMode();
+        DcMotor.RunMode rearRightMode = rearRightDrive.getMode();
+        DcMotor.RunMode rearLeftMode = rearLeftDrive.getMode();
+
+        // Get current positions
+        int frontLeftPosition = frontLeftDrive.getCurrentPosition();
+        int frontRightPosition = frontRightDrive.getCurrentPosition();
+        int rearRightPosition = rearRightDrive.getCurrentPosition();
+        int rearLeftPosition = rearLeftDrive.getCurrentPosition();
+
+        // Determine power
+        switch(direction){
+            case FORWARD:
+                frontLeftPosition -= TRANSLATE_FB;
+                frontRightPosition -= TRANSLATE_FB;
+                rearLeftPosition -= TRANSLATE_FB;
+                rearRightPosition -= TRANSLATE_FB;
+                break;
+            case RIGHT:
+                frontLeftPosition -= TRANSLATE_LR;
+                frontRightPosition += TRANSLATE_LR;
+                rearLeftPosition += TRANSLATE_LR;
+                rearRightPosition -= TRANSLATE_LR;
+                break;
+            case BACKWARD:
+                frontLeftPosition += TRANSLATE_FB;
+                frontRightPosition += TRANSLATE_FB;
+                rearLeftPosition += TRANSLATE_FB;
+                rearRightPosition += TRANSLATE_FB;
+                break;
+            case LEFT:
+                frontLeftPosition += TRANSLATE_LR;
+                frontRightPosition -= TRANSLATE_LR;
+                rearLeftPosition -= TRANSLATE_LR;
+                rearRightPosition += TRANSLATE_LR;
+                break;
+            default:
+                // We should never get here!
+                return;
+        }
+
+        // Move until new positions
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeftDrive.setTargetPosition(frontLeftPosition);
+        frontRightDrive.setTargetPosition(frontRightPosition);
+        rearLeftDrive.setTargetPosition(rearLeftPosition);
+        rearRightDrive.setTargetPosition(rearRightPosition);
+
+        // will wait till in position
+        while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
+        }
+
+        // reset mode
+        frontLeftDrive.setMode(frontLeftMode);
+        frontRightDrive.setMode(frontRightMode);
+        rearLeftDrive.setMode(rearLeftMode);
+        rearRightDrive.setMode(rearRightMode);
     }
 }
