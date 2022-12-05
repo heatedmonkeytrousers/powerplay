@@ -104,9 +104,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
         //Launch Threads
 
-        Elevator elevator = new Elevator(elevatorDrive, gamepad1);
-        elevator.start();
         Claw claw = new Claw(clawServo, gamepad1);
+        Elevator elevator = new Elevator(elevatorDrive, gamepad1, claw);
+        elevator.start();
+
         claw.start();
         Motion motion = new Motion(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, gamepad1, elevator);
         motion.start();
@@ -121,6 +122,11 @@ public class BasicOpMode_Linear extends LinearOpMode {
             telemetry.addData("Right Stick", "x (%.2f), y (%.2f)", gamepad1.right_stick_x, gamepad1.right_stick_y);
             telemetry.addData("Elevator Count", "(%7d)", elevator.getTotalCounts());
             telemetry.addData("Elevator Mode", elevatorDrive.getMode());
+            telemetry.addData("Front Left Motor", "(%7d)", frontLeftDrive.getCurrentPosition());
+            telemetry.addData("Front Right Motor", "(%7d)", frontRightDrive.getCurrentPosition());
+            telemetry.addData("Rear Left Motor", "(%7d)", rearLeftDrive.getCurrentPosition());
+            telemetry.addData("Rear Right Motor", "(%7d)", rearRightDrive.getCurrentPosition());
+            telemetry.addData("Back Clicked", gamepad1.back);
             telemetry.update();
         }
         elevator.interrupt();

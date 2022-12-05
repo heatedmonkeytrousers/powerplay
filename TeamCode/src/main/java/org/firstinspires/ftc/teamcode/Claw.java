@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw extends  Thread {
     static final double INCREMENT   = 0.001;
-    static final double MAX_POS     =  0.25;
+    static final double MAX_POS     =  0.24;
     static final double MIN_POS     =  0.1;
     private Servo clawServo;
     private Gamepad gamepad;
@@ -15,28 +15,26 @@ public class Claw extends  Thread {
         this.clawServo = clawServo;
         this.gamepad = gamepad;
     }
+
+    public void closeClaw () {
+        clawServo.setPosition(MIN_POS);
+    }
+
+    public void openClaw () {
+        clawServo.setPosition(MAX_POS);
+    }
+
     @Override
     public void run() {
         while(!isInterrupted()) {
             double position = clawServo.getPosition();
-            if (gamepad.dpad_left) {
-                position += INCREMENT ;
-            } else if (gamepad.dpad_right) {
-                position -= INCREMENT ;
-            }
+
             if (gamepad.left_bumper) {
-                position = MAX_POS;
+                openClaw();
             }
-            if(gamepad.right_bumper) {
-                position = MIN_POS;
+            else if(gamepad.right_bumper) {
+                closeClaw();
             }
-            if (position <= MIN_POS ) {
-                position = MIN_POS;
-            }
-            if (position >= MAX_POS ) {
-                position = MAX_POS;
-            }
-            clawServo.setPosition(position);
         }
     }
 }

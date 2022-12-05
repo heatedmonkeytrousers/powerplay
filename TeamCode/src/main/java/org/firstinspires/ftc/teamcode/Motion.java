@@ -9,6 +9,8 @@ public class Motion extends Thread{
     private static int MIDDLE_POSITION = 6647;
     private static int HIGH_POSITION = 9700;
 
+    private static double PF = 0.5;
+
     private DcMotor frontLeftDrive;
     private DcMotor frontRightDrive;
     private DcMotor rearLeftDrive;
@@ -42,16 +44,16 @@ public class Motion extends Thread{
             double strafe = gamepad.left_stick_x;
             double turn = -gamepad.right_stick_x;
 
-            frontLeftPower = Range.clip(drive + turn - strafe, -1.0, 1.0);
-            rearLeftPower = Range.clip(drive + turn + strafe, -1.0, 1.0);
-            frontRightPower = Range.clip(drive - turn + strafe, -1.0, 1.0);
-            rearRightPower = Range.clip(drive - turn - strafe, -1.0, 1.0);
+            frontLeftPower = Range.clip(drive + turn - strafe, -1.0, 1.0) * PF;
+            rearLeftPower = Range.clip(drive + turn + strafe, -1.0, 1.0) * PF;
+            frontRightPower = Range.clip(drive - turn + strafe, -1.0, 1.0) * PF;
+            rearRightPower = Range.clip(drive - turn - strafe, -1.0, 1.0) * PF;
 
             if (elevator.isUp()) {
-                frontLeftPower *= 0.2;
-                rearLeftPower *= 0.2;
-                frontRightPower *= 0.2;
-                rearRightPower *=0.2;
+                frontLeftPower *= 0.75;
+                rearLeftPower *= 0.75;
+                frontRightPower *= 0.75;
+                rearRightPower *=0.75;
             }
             // Send calculated power to wheels
             frontLeftDrive.setPower(frontLeftPower);
