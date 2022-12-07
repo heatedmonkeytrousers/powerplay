@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
 public class Motion extends Thread{
-    private static int LOW_POSITION = 3941;
-    private static int MIDDLE_POSITION = 6647;
-    private static int HIGH_POSITION = 9700;
+    public static int LOW_POSITION = 3941;
+    public static int MIDDLE_POSITION = 6647;
+    public static int HIGH_POSITION = 9700;
 
-    private static int TRANSLATE_FB = 1106;
-    private static int TRANSLATE_LR = 1200;
+    public static int TRANSLATE_FB = 1106;
+    public static int TRANSLATE_LR = 1200;
 
-    private static int ROTATE_360 = 3832;
+    public static int ROTATE_360 = 3832;
 
     private static double PF = 0.5;
 
@@ -25,7 +25,7 @@ public class Motion extends Thread{
     private Elevator elevator;
     private int totalCounts;
 
-    private enum Direction
+    public enum Direction
     {
         FORWARD,
         RIGHT,

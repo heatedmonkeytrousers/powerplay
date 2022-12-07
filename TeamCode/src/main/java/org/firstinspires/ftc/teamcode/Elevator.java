@@ -11,9 +11,9 @@ import org.opencv.core.Mat;
 
 public class Elevator extends Thread {
 
-    private static int LOW_POSITION = 3941;
-    private static int MIDDLE_POSITION = 6647;
-    private static int HIGH_POSITION = 9100;
+    public static int LOW_POSITION = 3941;
+    public static int MIDDLE_POSITION = 6647;
+    public static int HIGH_POSITION = 9100;
 
     private DcMotor elevatorDrive;
     private int totalCounts;
