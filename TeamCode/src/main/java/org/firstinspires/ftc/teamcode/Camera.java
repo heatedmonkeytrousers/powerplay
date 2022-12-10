@@ -124,7 +124,7 @@ public class Camera extends LinearOpMode{
             Core.extractChannel(input, redOutput, 0);
             Core.extractChannel(input, greenOutput, 1);
             Core.extractChannel(input, blueOutput, 2);
-            //Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2GRAY);
+
             Imgproc.threshold(redOutput, redOutput, 150, 255, Imgproc.THRESH_BINARY);
             Imgproc.threshold(greenOutput, greenOutput, 150, 255, Imgproc.THRESH_BINARY);
             Imgproc.threshold(blueOutput, blueOutput, 150, 255, Imgproc.THRESH_BINARY);

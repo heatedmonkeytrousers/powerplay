@@ -11,6 +11,7 @@ import org.opencv.core.Mat;
 
 public class Elevator extends Thread {
 
+    public static int GROUND_POSITION = 0;
     public static int LOW_POSITION = 3941;
     public static int MIDDLE_POSITION = 6647;
     public static int HIGH_POSITION = 9100;
@@ -21,8 +22,13 @@ public class Elevator extends Thread {
 
     private Claw claw;
 
-    static final double MAX_POS     =  0.25;
-    static final double MIN_POS     =  0.1;
+    public enum ELEVATOR_HEIGHT
+    {
+        GROUND,
+        LOW,
+        MEDIUM,
+        HIGH
+    }
 
     public Elevator(DcMotor elevatorDrive, Gamepad gamepad, Claw claw) {
         this.elevatorDrive = elevatorDrive;
@@ -36,9 +42,11 @@ public class Elevator extends Thread {
         return elevatorDrive.getCurrentPosition() > LOW_POSITION/2;
     }
 
-    public void setPosition(double power, int position) {
+    private void setPosition(double power, int position) {
         power = Range.clip(power, -1.0, 1.5);
         elevatorDrive.setPower(power);
+
+
         if (position < 0) {
             position = 0;
         }
@@ -68,10 +76,29 @@ public class Elevator extends Thread {
         }
     }
 
+    public void setPosition(double power, ELEVATOR_HEIGHT height) {
+        switch(height) {
+            case GROUND:
+                setPosition(power, GROUND_POSITION);
+                break;
+            case LOW:
+                setPosition(power, LOW_POSITION);
+                break;
+            case MEDIUM:
+                setPosition(power, MIDDLE_POSITION);
+                break;
+            case HIGH:
+                setPosition(power, HIGH_POSITION);
+                break;
+            default:
+                return;
+        }
+    }
     public void drop () {
-        elevatorDrive.setPower(1);
-        elevatorDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevatorDrive.setTargetPosition(totalCounts - 500);
+        elevatorDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        elevatorDrive.setPower(1);
+
         while (elevatorDrive.isBusy()) {
             if (gamepad.start) {
                 elevatorDrive.setPower(0);
@@ -101,7 +128,7 @@ public class Elevator extends Thread {
 
             // The set buttons for the elevators highs
             if (gamepad.a) {
-                setPosition(-1, 0);
+                setPosition(-1, GROUND_POSITION);
 
             } else if (gamepad.b) {
 
