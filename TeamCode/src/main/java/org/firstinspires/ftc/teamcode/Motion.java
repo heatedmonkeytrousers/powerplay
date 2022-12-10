@@ -76,8 +76,8 @@ public class Motion extends Thread{
         }
     }
 
-    public void translate(Direction direction)
-    {
+    public void translate(Direction direction, double squares) {
+
         // Get the currentModes
         DcMotor.RunMode frontLeftMode = frontLeftDrive.getMode();
         DcMotor.RunMode frontRightMode = frontRightDrive.getMode();
@@ -93,28 +93,28 @@ public class Motion extends Thread{
         // Determine power
         switch(direction){
             case FORWARD:
-                frontLeftPosition -= TRANSLATE_FB;
-                frontRightPosition -= TRANSLATE_FB;
-                rearLeftPosition -= TRANSLATE_FB;
-                rearRightPosition -= TRANSLATE_FB;
+                frontLeftPosition -= TRANSLATE_FB * squares;
+                frontRightPosition -= TRANSLATE_FB * squares;
+                rearLeftPosition -= TRANSLATE_FB * squares;
+                rearRightPosition -= TRANSLATE_FB * squares;
                 break;
             case RIGHT:
-                frontLeftPosition -= TRANSLATE_LR;
-                frontRightPosition += TRANSLATE_LR;
-                rearLeftPosition += TRANSLATE_LR;
-                rearRightPosition -= TRANSLATE_LR;
+                frontLeftPosition -= TRANSLATE_LR * squares;
+                frontRightPosition += TRANSLATE_LR * squares;
+                rearLeftPosition += TRANSLATE_LR * squares;
+                rearRightPosition -= TRANSLATE_LR * squares;
                 break;
             case BACKWARD:
-                frontLeftPosition += TRANSLATE_FB;
-                frontRightPosition += TRANSLATE_FB;
-                rearLeftPosition += TRANSLATE_FB;
-                rearRightPosition += TRANSLATE_FB;
+                frontLeftPosition += TRANSLATE_FB * squares;
+                frontRightPosition += TRANSLATE_FB * squares;
+                rearLeftPosition += TRANSLATE_FB * squares;
+                rearRightPosition += TRANSLATE_FB * squares;
                 break;
             case LEFT:
-                frontLeftPosition += TRANSLATE_LR;
-                frontRightPosition -= TRANSLATE_LR;
-                rearLeftPosition -= TRANSLATE_LR;
-                rearRightPosition += TRANSLATE_LR;
+                frontLeftPosition += TRANSLATE_LR * squares;
+                frontRightPosition -= TRANSLATE_LR * squares;
+                rearLeftPosition -= TRANSLATE_LR * squares;
+                rearRightPosition += TRANSLATE_LR * squares;
                 break;
             default:
                 // We should never get here!
@@ -171,19 +171,19 @@ public class Motion extends Thread{
             case FORWARD:
             case RIGHT:
 
-                frontLeftPosition -= ROTATE_360;
-                frontRightPosition += ROTATE_360;
-                rearLeftPosition -= ROTATE_360;
-                rearRightPosition += ROTATE_360;
+                frontLeftPosition -= rotation;
+                frontRightPosition += rotation;
+                rearLeftPosition -= rotation;
+                rearRightPosition += rotation;
                 break;
 
             case BACKWARD:
             case LEFT:
 
-                frontLeftPosition += ROTATE_360;
-                frontRightPosition -= ROTATE_360;
-                rearLeftPosition += ROTATE_360;
-                rearRightPosition -= ROTATE_360;
+                frontLeftPosition += rotation;
+                frontRightPosition -= rotation;
+                rearLeftPosition += rotation;
+                rearRightPosition -= rotation;
                 break;
 
             default:
