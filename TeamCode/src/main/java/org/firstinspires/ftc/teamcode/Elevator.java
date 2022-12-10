@@ -146,6 +146,7 @@ public class Elevator extends Thread {
             }
             else {
                 elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             }
         }
     }
