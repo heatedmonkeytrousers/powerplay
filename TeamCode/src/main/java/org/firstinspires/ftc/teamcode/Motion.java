@@ -122,16 +122,20 @@ public class Motion extends Thread{
         }
 
         // Move until new positions
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rearRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontLeftDrive.setTargetPosition(frontLeftPosition);
         frontRightDrive.setTargetPosition(frontRightPosition);
         rearLeftDrive.setTargetPosition(rearLeftPosition);
         rearRightDrive.setTargetPosition(rearRightPosition);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // will wait till in position
+        frontLeftDrive.setPower(0.5);
+        frontRightDrive.setPower(0.5);
+        rearLeftDrive.setPower(0.5);
+        rearRightDrive.setPower(0.5);
         while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()){
             try {
                 Thread.sleep(100);
@@ -140,10 +144,10 @@ public class Motion extends Thread{
         }
 
         // reset mode
-        frontLeftDrive.setMode(frontLeftMode);
-        frontRightDrive.setMode(frontRightMode);
-        rearLeftDrive.setMode(rearLeftMode);
-        rearRightDrive.setMode(rearRightMode);
+        frontLeftDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        rearLeftDrive.setPower(0);
+        rearRightDrive.setPower(0);
     }
 
     public void rotation (Direction direction, double angle) {
@@ -197,8 +201,18 @@ public class Motion extends Thread{
         rearLeftDrive.setTargetPosition(rearLeftPosition);
         rearRightDrive.setTargetPosition(rearRightPosition);
 
+        frontLeftDrive.setPower(0.5);
+        frontRightDrive.setPower(0.5);
+        rearLeftDrive.setPower(0.5);
+        rearRightDrive.setPower(0.5);
+
         // will wait till in position
         while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()){}
+
+        frontLeftDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        rearLeftDrive.setPower(0);
+        rearRightDrive.setPower(0);
 
         // reset mode
         frontLeftDrive.setMode(frontLeftMode);

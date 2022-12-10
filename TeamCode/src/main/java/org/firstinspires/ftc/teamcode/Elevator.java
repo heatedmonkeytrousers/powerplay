@@ -37,6 +37,7 @@ public class Elevator extends Thread {
     }
 
     public void setPosition(double power, int position) {
+        totalCounts = elevatorDrive.getCurrentPosition();
         power = Range.clip(power, -1.0, 1.5);
         elevatorDrive.setPower(power);
         if (position < 0) {
@@ -56,11 +57,12 @@ public class Elevator extends Thread {
             while (totalCounts < 0) {
                 totalCounts = elevatorDrive.getCurrentPosition();
             }
+            elevatorDrive.setPower(0);
         } else {
 
             while (totalCounts < position) {
                 totalCounts = elevatorDrive.getCurrentPosition();
-                if (gamepad.start) {
+                if (gamepad != null && gamepad.start) {
                     elevatorDrive.setPower(0);
                     break;
                 }
@@ -73,7 +75,7 @@ public class Elevator extends Thread {
         elevatorDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevatorDrive.setTargetPosition(totalCounts - 500);
         while (elevatorDrive.isBusy()) {
-            if (gamepad.start) {
+            if (gamepad != null && gamepad.start) {
                 elevatorDrive.setPower(0);
                 elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 break;
