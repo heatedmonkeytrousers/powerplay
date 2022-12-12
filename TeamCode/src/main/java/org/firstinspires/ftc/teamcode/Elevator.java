@@ -12,9 +12,9 @@ import org.opencv.core.Mat;
 public class Elevator extends Thread {
 
     public static int GROUND_POSITION = 0;
-    public static int LOW_POSITION = 4041;
-    public static int MIDDLE_POSITION = 6747;
-    public static int HIGH_POSITION = 9350;
+    public static int LOW_POSITION = 4141;
+    public static int MIDDLE_POSITION = 6847;
+    public static int HIGH_POSITION = 9450;
 
     private DcMotor elevatorDrive;
     private int totalCounts;
@@ -67,10 +67,10 @@ public class Elevator extends Thread {
                 setPosition(power, HIGH_POSITION);
                 break;
             case ADJUST_DOWN:
-                setPosition(power, elevatorDrive.getCurrentPosition()-500);
+                setPosition(power, elevatorDrive.getCurrentPosition()-100);
                 break;
             case ADJUST_UP:
-                setPosition(power,elevatorDrive.getCurrentPosition()+500);
+                setPosition(power,elevatorDrive.getCurrentPosition()+100);
                 break;
             default:
                 return;
@@ -111,10 +111,13 @@ public class Elevator extends Thread {
             } else if (gamepad.y) {
                     setPosition(1, HIGH_POSITION);
 
-            } else if (gamepad.left_trigger) {
+            } else if (gamepad.dpad_down) {
+                setPosition(-1, elevatorDrive.getCurrentPosition()-150);
 
-            } else
-            else if (gamepad.back) {
+            } else if (gamepad.dpad_up) {
+                setPosition(1, elevatorDrive.getCurrentPosition()+150);
+
+            } else if (gamepad.back) {
                 drop();
             }
 
