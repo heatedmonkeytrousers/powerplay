@@ -118,6 +118,8 @@ public class Elevator extends Thread {
                 setPosition(1, elevatorDrive.getCurrentPosition()+150);
 
             } else if (gamepad.back) {
+            }
+            else if (gamepad.back) {
                 drop();
             }
 
