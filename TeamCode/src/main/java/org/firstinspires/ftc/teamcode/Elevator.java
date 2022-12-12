@@ -27,7 +27,9 @@ public class Elevator extends Thread {
         GROUND,
         LOW,
         MEDIUM,
-        HIGH
+        HIGH,
+        ADJUST_DOWN,
+        ADJUST_UP
     }
 
     public Elevator(DcMotor elevatorDrive, Gamepad gamepad, Claw claw) {
@@ -63,6 +65,12 @@ public class Elevator extends Thread {
                 break;
             case HIGH:
                 setPosition(power, HIGH_POSITION);
+                break;
+            case ADJUST_DOWN:
+                setPosition(power, elevatorDrive.getCurrentPosition()-500);
+                break;
+            case ADJUST_UP:
+                setPosition(power,elevatorDrive.getCurrentPosition()+500);
                 break;
             default:
                 return;
@@ -103,7 +111,10 @@ public class Elevator extends Thread {
             } else if (gamepad.y) {
                     setPosition(1, HIGH_POSITION);
 
-            } else if (gamepad.back) {
+            } else if (gamepad.left_trigger) {
+
+            } else
+            else if (gamepad.back) {
                 drop();
             }
 
