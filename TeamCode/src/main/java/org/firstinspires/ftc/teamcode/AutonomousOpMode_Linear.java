@@ -60,14 +60,30 @@ public class AutonomousOpMode_Linear extends LinearOpMode {
         //Autonomous time!!!!!
         //copy code from ftc computer
         claw.closeClaw();
-        motion.translate (Motion.Direction.FORWARD, 2.25);
-        motion.rotation (Motion.Direction.RIGHT,45);
-        elevator.setPosition (-1, Elevator.ELEVATOR_HEIGHT.HIGH);
-        motion.translate (Motion. Direction.FORWARD,.25);
-        elevator.drop();
-        motion.translate (Motion.Direction.BACKWARD,.25);
+        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
+        motion.translate (Motion.Direction.FORWARD, .17);
         motion.rotation (Motion.Direction.LEFT,45);
-        motion.translate (Motion.Direction.BACKWARD,1.25);
+        motion.translate (Motion.Direction.FORWARD, .3);
+        elevator.drop();
+        motion.translate (Motion.Direction.BACKWARD, .3);
+        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.GROUND);
+        motion.rotation (Motion.Direction.RIGHT,45);
+        motion.translate (Motion.Direction.FORWARD, .65);
+        claw.closeClaw();
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+
+        }
+//////////////////////////////////////////////////////////////
+        elevator.setPosition (-1, Elevator.ELEVATOR_HEIGHT.HIGH);
+        motion.translate (Motion.Direction.FORWARD, 1.25);
+        motion.rotation (Motion.Direction.LEFT,45);
+        motion.translate (Motion. Direction.FORWARD,.3);
+        elevator.drop();
+        motion.translate (Motion.Direction.BACKWARD,.3);
+        motion.rotation (Motion.Direction.LEFT,45);
+        motion.translate (Motion.Direction.FORWARD,1);
 
     }
 

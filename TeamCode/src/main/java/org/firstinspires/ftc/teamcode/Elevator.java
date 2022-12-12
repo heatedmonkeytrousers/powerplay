@@ -28,6 +28,7 @@ public class Elevator extends Thread {
         LOW,
         MEDIUM,
         HIGH,
+        DROP,
         ADJUST_DOWN,
         ADJUST_UP
     }
@@ -65,6 +66,15 @@ public class Elevator extends Thread {
                 break;
             case HIGH:
                 setPosition(power, HIGH_POSITION);
+                break;
+            case DROP:
+                setPosition(power, elevatorDrive.getCurrentPosition() - 500);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+
+                }
+                claw.openClaw();
                 break;
             case ADJUST_DOWN:
                 setPosition(power, elevatorDrive.getCurrentPosition()-100);
@@ -118,8 +128,6 @@ public class Elevator extends Thread {
                 setPosition(1, elevatorDrive.getCurrentPosition()+150);
 
             } else if (gamepad.back) {
-            }
-            else if (gamepad.back) {
                 drop();
             }
 

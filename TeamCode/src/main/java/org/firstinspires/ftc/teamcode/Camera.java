@@ -136,10 +136,13 @@ public class Camera extends LinearOpMode{
             telemetry.addData("red pixels", Core.countNonZero(redOutput));
             telemetry.addData("blue pixels", Core.countNonZero(blueOutput));
             telemetry.addData("green pixels", Core.countNonZero(greenOutput));
+            try {
+                Thread.sleep(Long.MAX_VALUE);
+            } catch (InterruptedException e) {
+
+            }
             return input;
-
         }
-
         @Override
         public void onViewportTapped()
         {
