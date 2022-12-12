@@ -95,6 +95,13 @@ public class Camera extends LinearOpMode{
         @Override
         public Mat processFrame(Mat input)
         {
+            Mat redOutput = new Mat();
+            Mat blueOutput = new Mat();
+            Mat greenOutput = new Mat();
+
+            int red = 0;
+            int blue = 0;
+            int green = 0;
             /*
              * Draw a simple box around the middle 1/2 of the entire frame
              */
@@ -107,17 +114,28 @@ public class Camera extends LinearOpMode{
                     new Point(
                             input.cols()*(3f/4f),
                             input.rows()*(3f/4f)),
-                    new Scalar(0, 255, 0), 4);
+                    new Scalar(0, 0, 0), 1);
 
             /*
              * NOTE: to see how to get data from your pipeline to your OpMode as well as how
              * to change which stage of the pipeline is rendered to the viewport when it is
              * tapped, please see {@link PipelineStageSwitchingExample}
              */
-            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2GRAY);
-            Imgproc.threshold(input, input, 111, 255, Imgproc.THRESH_BINARY);
-            telemetry.addData("White pixels", Core.countNonZero(input));
-            telemetry.update();
+            Core.extractChannel(input, redOutput, 0);
+            Core.extractChannel(input, greenOutput, 1);
+            Core.extractChannel(input, blueOutput, 2);
+
+            Imgproc.threshold(redOutput, redOutput, 150, 255, Imgproc.THRESH_BINARY);
+            Imgproc.threshold(greenOutput, greenOutput, 150, 255, Imgproc.THRESH_BINARY);
+            Imgproc.threshold(blueOutput, blueOutput, 150, 255, Imgproc.THRESH_BINARY);
+
+            red = Core.countNonZero(redOutput);
+            blue = Core.countNonZero(blueOutput);
+            green = Core.countNonZero(greenOutput);
+
+            telemetry.addData("red pixels", Core.countNonZero(redOutput));
+            telemetry.addData("blue pixels", Core.countNonZero(blueOutput));
+            telemetry.addData("green pixels", Core.countNonZero(greenOutput));
             return input;
 
         }

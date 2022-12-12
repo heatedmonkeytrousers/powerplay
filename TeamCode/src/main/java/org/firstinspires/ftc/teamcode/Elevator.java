@@ -11,9 +11,10 @@ import org.opencv.core.Mat;
 
 public class Elevator extends Thread {
 
-    public static int LOW_POSITION = 3941;
-    public static int MIDDLE_POSITION = 6647;
-    public static int HIGH_POSITION = 9100;
+    public static int GROUND_POSITION = 0;
+    public static int LOW_POSITION = 4041;
+    public static int MIDDLE_POSITION = 6747;
+    public static int HIGH_POSITION = 9350;
 
     private DcMotor elevatorDrive;
     private int totalCounts;
@@ -21,8 +22,15 @@ public class Elevator extends Thread {
 
     private Claw claw;
 
-    static final double MAX_POS     =  0.25;
-    static final double MIN_POS     =  0.1;
+    public enum ELEVATOR_HEIGHT
+    {
+        GROUND,
+        LOW,
+        MEDIUM,
+        HIGH,
+        ADJUST_DOWN,
+        ADJUST_UP
+    }
 
     public Elevator(DcMotor elevatorDrive, Gamepad gamepad, Claw claw) {
         this.elevatorDrive = elevatorDrive;
@@ -36,74 +44,61 @@ public class Elevator extends Thread {
         return elevatorDrive.getCurrentPosition() > LOW_POSITION/2;
     }
 
-    public void setPosition(double power, int position) {
-        totalCounts = elevatorDrive.getCurrentPosition();
+    private void setPosition(double power, int position) {
         power = Range.clip(power, -1.0, 1.5);
+        elevatorDrive.setTargetPosition(position);
+        elevatorDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevatorDrive.setPower(power);
-        if (position < 0) {
-            position = 0;
-        }
-        if (position == 0) {
-            elevatorDrive.setPower(-1);
-            while (totalCounts > 0) {
-                totalCounts = elevatorDrive.getCurrentPosition();
-                if (gamepad.start) {
-                    elevatorDrive.setPower(0);
-                    break;
-                }
-            }
-            elevatorDrive.setPower(0.1);
 
-            while (totalCounts < 0) {
-                totalCounts = elevatorDrive.getCurrentPosition();
-            }
-            elevatorDrive.setPower(0);
-        } else {
-
-            while (totalCounts < position) {
-                totalCounts = elevatorDrive.getCurrentPosition();
-                if (gamepad != null && gamepad.start) {
-                    elevatorDrive.setPower(0);
-                    break;
-                }
-            }
-        }
     }
 
-    public void drop () {
-        elevatorDrive.setPower(1);
-        elevatorDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        elevatorDrive.setTargetPosition(totalCounts - 500);
-        while (elevatorDrive.isBusy()) {
-            if (gamepad != null && gamepad.start) {
-                elevatorDrive.setPower(0);
-                elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void setPosition(double power, ELEVATOR_HEIGHT height) {
+        switch(height) {
+            case GROUND:
+                setPosition(power, GROUND_POSITION);
                 break;
-            }
+            case LOW:
+                setPosition(power, LOW_POSITION);
+                break;
+            case MEDIUM:
+                setPosition(power, MIDDLE_POSITION);
+                break;
+            case HIGH:
+                setPosition(power, HIGH_POSITION);
+                break;
+            case ADJUST_DOWN:
+                setPosition(power, elevatorDrive.getCurrentPosition()-500);
+                break;
+            case ADJUST_UP:
+                setPosition(power,elevatorDrive.getCurrentPosition()+500);
+                break;
+            default:
+                return;
         }
-        elevatorDrive.setPower(0);
+    }
+    public void drop () {
+        setPosition(-1, elevatorDrive.getCurrentPosition() - 500);
         totalCounts = elevatorDrive.getCurrentPosition();
-        claw.openClaw();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
 
         }
+        claw.openClaw();
 
-        elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public void run() {
         while (!isInterrupted()) {
             double elevatorPower = gamepad.left_trigger - gamepad.right_trigger;
-            elevatorPower = Range.clip(elevatorPower, -1.0, 1.5);
-            elevatorDrive.setPower(elevatorPower);
+            //elevatorPower = Range.clip(elevatorPower, -1.0, 1.5);
+            //elevatorDrive.setPower(elevatorPower);
             totalCounts = elevatorDrive.getCurrentPosition();
 
             // The set buttons for the elevators highs
             if (gamepad.a) {
-                setPosition(-1, 0);
+                setPosition(-1, GROUND_POSITION);
 
             } else if (gamepad.b) {
 
@@ -116,12 +111,15 @@ public class Elevator extends Thread {
             } else if (gamepad.y) {
                     setPosition(1, HIGH_POSITION);
 
-            } else if (gamepad.back) {
+            } else if (gamepad.left_trigger) {
+
+            } else
+            else if (gamepad.back) {
                 drop();
             }
-            else {
-                elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
+
         }
     }
 }
+
+
