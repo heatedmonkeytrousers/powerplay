@@ -111,9 +111,7 @@ public class Elevator extends Thread {
             } else if (gamepad.y) {
                     setPosition(1, HIGH_POSITION);
 
-            } else if (gamepad.left_trigger) {
-
-            } else
+            }
             else if (gamepad.back) {
                 drop();
             }
