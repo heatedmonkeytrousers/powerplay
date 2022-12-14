@@ -19,6 +19,7 @@ public class Elevator extends Thread {
     private DcMotor elevatorDrive;
     private int totalCounts;
     private Gamepad gamepad;
+    private Motion motion;
 
     private Claw claw;
 
@@ -42,7 +43,13 @@ public class Elevator extends Thread {
         this.elevatorDrive = elevatorDrive;
         this.gamepad = gamepad;
         this.claw = claw;
+        this.motion = null;
     }
+
+    public void setMotion (Motion motion) {
+        this.motion = motion;
+    }
+
     public int getTotalCounts() {
         return totalCounts;
     }
@@ -149,6 +156,12 @@ public class Elevator extends Thread {
 
             } else if (gamepad.back) {
                 drop();
+            } else if (gamepad.dpad_right) {
+                if (elevatorDrive.getCurrentPosition() < 1529 + 1529*0.1 && elevatorDrive.getCurrentPosition() > 1529 - 1529 * 0.1) {
+                    setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
+                } else {
+                    setPosition(-1, ELEVATOR_HEIGHT.CONE_5);
+                }
             }
 
         }
