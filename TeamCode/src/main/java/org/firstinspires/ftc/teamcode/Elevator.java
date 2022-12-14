@@ -30,7 +30,12 @@ public class Elevator extends Thread {
         HIGH,
         DROP,
         ADJUST_DOWN,
-        ADJUST_UP
+        ADJUST_UP,
+        CONE_5,
+        CONE_4,
+        CONE_3,
+        CONE_2,
+        CONE_1
     }
 
     public Elevator(DcMotor elevatorDrive, Gamepad gamepad, Claw claw) {
@@ -81,6 +86,21 @@ public class Elevator extends Thread {
                 break;
             case ADJUST_UP:
                 setPosition(power,elevatorDrive.getCurrentPosition()+100);
+                break;
+            case CONE_5:
+                setPosition(power, 1529);
+                break;
+            case CONE_4:
+                setPosition(power,1145);
+                break;
+            case CONE_3:
+                setPosition(power, 748);
+                break;
+            case CONE_2:
+                setPosition(power, 400);
+                break;
+            case CONE_1:
+                setPosition(power, 0);
                 break;
             default:
                 return;
