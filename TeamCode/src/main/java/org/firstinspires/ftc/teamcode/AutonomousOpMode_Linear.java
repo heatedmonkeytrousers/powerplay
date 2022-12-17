@@ -60,15 +60,19 @@ public class AutonomousOpMode_Linear extends LinearOpMode {
         //Autonomous time!!!!!
         //copy code from ftc computer
         claw.closeClaw();
-        motion.translate (Motion.Direction.FORWARD, 2.25);
-        motion.rotation (Motion.Direction.RIGHT,45);
+        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
+        motion.translate (Motion.Direction.FORWARD, 2.5);
         elevator.setPosition (-1, Elevator.ELEVATOR_HEIGHT.HIGH);
-        motion.translate (Motion. Direction.FORWARD,.25);
-        elevator.drop();
-        motion.translate (Motion.Direction.BACKWARD,.25);
+        motion.translate (Motion.Direction.BACKWARD, 0.2);
         motion.rotation (Motion.Direction.LEFT,45);
-        motion.translate (Motion.Direction.BACKWARD,1.25);
-
+        motion.translate (Motion.Direction.FORWARD, .2);
+        elevator.drop();
+        motion.translate (Motion.Direction.BACKWARD, .2);
+        motion.rotation (Motion.Direction.LEFT,45);
+        motion.translate (Motion.Direction.FORWARD, 1.25);
+        motion.rotation (Motion.Direction.LEFT,90);
+        claw.openClaw();
+        //elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE5);
     }
 
 }
