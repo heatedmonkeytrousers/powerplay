@@ -9,6 +9,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -34,7 +35,7 @@ public class Camera extends LinearOpMode{
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(160, 120, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -94,28 +95,54 @@ public class Camera extends LinearOpMode{
         @Override
         public Mat processFrame(Mat input)
         {
+            Mat redOutput = new Mat();
+            Mat blueOutput = new Mat();
+            Mat greenOutput = new Mat();
+
+            int red = 0;
+            int blue = 0;
+            int green = 0;
             /*
              * Draw a simple box around the middle 1/2 of the entire frame
              */
+
             Imgproc.rectangle(
                     input,
-                    new Point(
+                    new Point (
                             input.cols()/4,
                             input.rows()/4),
                     new Point(
                             input.cols()*(3f/4f),
                             input.rows()*(3f/4f)),
-                    new Scalar(0, 255, 0), 4);
+                    new Scalar(0, 0, 0), 1);
 
-            /**
+            /*
              * NOTE: to see how to get data from your pipeline to your OpMode as well as how
              * to change which stage of the pipeline is rendered to the viewport when it is
              * tapped, please see {@link PipelineStageSwitchingExample}
              */
+            Core.extractChannel(input, redOutput, 0);
+            Core.extractChannel(input, greenOutput, 1);
+            Core.extractChannel(input, blueOutput, 2);
 
+            Imgproc.threshold(redOutput, redOutput, 150, 255, Imgproc.THRESH_BINARY);
+            Imgproc.threshold(greenOutput, greenOutput, 150, 255, Imgproc.THRESH_BINARY);
+            Imgproc.threshold(blueOutput, blueOutput, 150, 255, Imgproc.THRESH_BINARY);
+
+            red = Core.countNonZero(redOutput);
+            blue = Core.countNonZero(blueOutput);
+            green = Core.countNonZero(greenOutput);
+
+            telemetry.addData("red pixels", Core.countNonZero(redOutput));
+            telemetry.addData("blue pixels", Core.countNonZero(blueOutput));
+            telemetry.addData("green pixels", Core.countNonZero(greenOutput));
+            try {
+                Thread.sleep(Long.MAX_VALUE);
+            } catch (InterruptedException e) {
+
+            }
             return input;
         }
-
         @Override
         public void onViewportTapped()
         {
