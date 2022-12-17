@@ -19,6 +19,7 @@ public class Elevator extends Thread {
     private DcMotor elevatorDrive;
     private int totalCounts;
     private Gamepad gamepad;
+    private Motion motion;
 
     private Claw claw;
 
@@ -28,15 +29,27 @@ public class Elevator extends Thread {
         LOW,
         MEDIUM,
         HIGH,
+        DROP,
         ADJUST_DOWN,
-        ADJUST_UP
+        ADJUST_UP,
+        CONE_5,
+        CONE_4,
+        CONE_3,
+        CONE_2,
+        CONE_1
     }
 
     public Elevator(DcMotor elevatorDrive, Gamepad gamepad, Claw claw) {
         this.elevatorDrive = elevatorDrive;
         this.gamepad = gamepad;
         this.claw = claw;
+        this.motion = null;
     }
+
+    public void setMotion (Motion motion) {
+        this.motion = motion;
+    }
+
     public int getTotalCounts() {
         return totalCounts;
     }
@@ -66,11 +79,35 @@ public class Elevator extends Thread {
             case HIGH:
                 setPosition(power, HIGH_POSITION);
                 break;
+            case DROP:
+                setPosition(power, elevatorDrive.getCurrentPosition() - 500);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+
+                }
+                claw.openClaw();
+                break;
             case ADJUST_DOWN:
                 setPosition(power, elevatorDrive.getCurrentPosition()-100);
                 break;
             case ADJUST_UP:
                 setPosition(power,elevatorDrive.getCurrentPosition()+100);
+                break;
+            case CONE_5:
+                setPosition(power, 1529);
+                break;
+            case CONE_4:
+                setPosition(power,1145);
+                break;
+            case CONE_3:
+                setPosition(power, 748);
+                break;
+            case CONE_2:
+                setPosition(power, 400);
+                break;
+            case CONE_1:
+                setPosition(power, 0);
                 break;
             default:
                 return;
@@ -118,9 +155,13 @@ public class Elevator extends Thread {
                 setPosition(1, elevatorDrive.getCurrentPosition()+150);
 
             } else if (gamepad.back) {
-            }
-            else if (gamepad.back) {
                 drop();
+            } else if (gamepad.dpad_right) {
+                if (elevatorDrive.getCurrentPosition() < 1529 + 1529*0.1 && elevatorDrive.getCurrentPosition() > 1529 - 1529 * 0.1) {
+                    setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
+                } else {
+                    setPosition(-1, ELEVATOR_HEIGHT.CONE_5);
+                }
             }
 
         }
