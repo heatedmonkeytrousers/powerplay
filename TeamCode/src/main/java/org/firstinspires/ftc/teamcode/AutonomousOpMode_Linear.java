@@ -48,7 +48,6 @@ public class AutonomousOpMode_Linear extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         elevatorDrive.setTargetPosition(0);
-        clawServo.setPosition(0.1);
 
         Claw claw =new Claw(clawServo, null);
         Elevator elevator = new Elevator(elevatorDrive,null, claw);
@@ -58,24 +57,35 @@ public class AutonomousOpMode_Linear extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+
         //Autonomous time!!!!!
         //copy code from ftc computer
         claw.closeClaw();
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
-        motion.translate (Motion.Direction.FORWARD, 2.3);
+        motion.translate (Motion.Direction.FORWARD, 2.7, 0.6);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.HIGH);
-        motion.translate(Motion.Direction.BACKWARD, 0.2);
-        motion.rotation (Motion.Direction.LEFT,45);
-        motion.translate (Motion.Direction.FORWARD, .5);
-        motion.translate (Motion.Direction.BACKWARD,.1);
+        motion.translate(Motion.Direction.BACKWARD, 0.45, 0.5);
+        motion.rotation (Motion.Direction.LEFT,45,0.5);
+        motion.translate (Motion.Direction.FORWARD, .35,0.5);
         elevator.drop();
-        motion.translate (Motion.Direction.BACKWARD, .3);
-        motion.rotation(Motion.Direction.LEFT, 45);
-        motion.translate(Motion.Direction.FORWARD, 1);
-        motion.rotation(Motion.Direction.LEFT, 90);
-        claw.openClaw();
+        motion.translate (Motion.Direction.BACKWARD, .35,0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
-        motion.translate (Motion.Direction.FORWARD,2);
+        motion.rotation(Motion.Direction.RIGHT, 135,0.5);
+        claw.openClaw();
+        motion.translate (Motion.Direction.FORWARD,1.05,0.5);
+        sleep(300);
+        claw.closeClaw();
+        sleep(400);
+        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
+        sleep(400);
+        motion.translate(Motion.Direction.BACKWARD, 1,0.5);
+        motion.rotation(Motion.Direction.RIGHT, 45,0.5);
+        motion.translate (Motion.Direction.FORWARD, .35,0.5);
+        elevator.drop();
+        motion.translate (Motion.Direction.BACKWARD, .35,0.5);
+        motion.rotation(Motion.Direction.RIGHT, 45,0.5);
+        motion.translate (Motion.Direction.FORWARD, .5,0.5);
+        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.GROUND);
 
     }
 
