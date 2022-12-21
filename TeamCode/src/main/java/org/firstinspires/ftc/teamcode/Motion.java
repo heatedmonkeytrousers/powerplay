@@ -33,6 +33,12 @@ public class Motion extends Thread{
         LEFT
     }
 
+    public enum PARKING_SPOT {
+        PARK_ONE,
+        PARK_TWO,
+        PARK_THREE
+    }
+
     public Motion (DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor rearLeftDrive, DcMotor rearRightDrive, Gamepad gamepad, Elevator elevator) {
         this.frontLeftDrive = frontLeftDrive;
         this.frontRightDrive = frontRightDrive;

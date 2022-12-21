@@ -27,7 +27,7 @@ public class Camera extends LinearOpMode{
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        webcam.setPipeline(new SamplePipeline());
+        webcam.setPipeline(new ColorDetection());
 
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -35,7 +35,7 @@ public class Camera extends LinearOpMode{
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(160, 120, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -52,7 +52,6 @@ public class Camera extends LinearOpMode{
         /*
          * Wait for the user to press start on the Driver Station
          */
-
         waitForStart();
 
         while (opModeIsActive())
@@ -60,13 +59,6 @@ public class Camera extends LinearOpMode{
             /*
              * Send some stats to the telemetry
              */
-            telemetry.addData("Frame Count", webcam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
-            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
-            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
-            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
-            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
-            telemetry.update();
 
             /*
              * NOTE: stopping the stream from the camera early (before the end of the OpMode
@@ -88,9 +80,21 @@ public class Camera extends LinearOpMode{
         }
     }
 
-    class SamplePipeline extends OpenCvPipeline
+    static class ColorDetection extends OpenCvPipeline
     {
-        boolean viewportPaused;
+
+        private int red;
+        private int blue;
+        private int green;
+
+        public enum PARKING_SPOT {
+            PARK_ONE,
+            PARK_TWO,
+            PARK_THREE
+        }
+
+        private volatile PARKING_SPOT position = PARKING_SPOT.PARK_ONE;
+
 
         @Override
         public Mat processFrame(Mat input)
@@ -99,9 +103,6 @@ public class Camera extends LinearOpMode{
             Mat blueOutput = new Mat();
             Mat greenOutput = new Mat();
 
-            int red = 0;
-            int blue = 0;
-            int green = 0;
             /*
              * Draw a simple box around the middle 1/2 of the entire frame
              */
@@ -133,32 +134,22 @@ public class Camera extends LinearOpMode{
             blue = Core.countNonZero(blueOutput);
             green = Core.countNonZero(greenOutput);
 
-            telemetry.addData("red pixels", Core.countNonZero(redOutput));
-            telemetry.addData("blue pixels", Core.countNonZero(blueOutput));
-            telemetry.addData("green pixels", Core.countNonZero(greenOutput));
-            try {
-                Thread.sleep(Long.MAX_VALUE);
-            } catch (InterruptedException e) {
+            if (red > blue && red > green) {
+                position = PARKING_SPOT.PARK_ONE;
 
+            } else if (blue > green) {
+                position = PARKING_SPOT.PARK_TWO;
+
+            } else  {
+                position = PARKING_SPOT.PARK_THREE;
             }
+
             return input;
         }
-        @Override
-        public void onViewportTapped()
+
+        public Camera.ColorDetection.PARKING_SPOT getAnalysis()
         {
-
-
-            viewportPaused = !viewportPaused;
-
-            if(viewportPaused)
-            {
-                webcam.pauseViewport();
-            }
-            else
-            {
-                webcam.resumeViewport();
-
-            }
+            return position;
         }
     }
 }
