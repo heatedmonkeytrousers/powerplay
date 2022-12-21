@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,11 +11,11 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp (name="Detection", group="Linear Opmode")
 public class Field extends LinearOpMode {
+
     OpenCvWebcam webcam;
-    Process.SkystoneDeterminationPipeline pipeline;
-    Process.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = Process.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
+    Camera.ColorDetection pipeline;
+    Camera.ColorDetection.PARKING_SPOT snapshotAnalysis = Camera.ColorDetection.PARKING_SPOT.PARK_ONE; // default
 
     @Override
     public void runOpMode()
@@ -27,7 +29,7 @@ public class Field extends LinearOpMode {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new Process.SkystoneDeterminationPipeline();
+        pipeline = new Camera.ColorDetection();
         webcam.setPipeline(pipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -70,21 +72,18 @@ public class Field extends LinearOpMode {
 
         switch (snapshotAnalysis)
         {
-            case LEFT:
+            case PARK_ONE:
             {
-                /* Your autonomous code */
                 break;
             }
 
-            case RIGHT:
+            case PARK_TWO:
             {
-                /* Your autonomous code */
                 break;
             }
 
-            case CENTER:
+            case PARK_THREE:
             {
-                /* Your autonomous code*/
                 break;
             }
         }

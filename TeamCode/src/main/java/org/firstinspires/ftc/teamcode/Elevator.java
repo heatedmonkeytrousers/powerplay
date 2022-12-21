@@ -89,10 +89,10 @@ public class Elevator extends Thread {
                 claw.openClaw();
                 break;
             case ADJUST_DOWN:
-                setPosition(power, elevatorDrive.getCurrentPosition()-100);
+                setPosition(power, elevatorDrive.getCurrentPosition()-250);
                 break;
             case ADJUST_UP:
-                setPosition(power,elevatorDrive.getCurrentPosition()+100);
+                setPosition(power,elevatorDrive.getCurrentPosition()+250);
                 break;
             case CONE_5:
                 setPosition(power, 1529);
