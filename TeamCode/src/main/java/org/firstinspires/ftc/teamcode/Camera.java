@@ -80,7 +80,7 @@ public class Camera extends LinearOpMode{
         }
     }
 
-    static class ColorDetection extends OpenCvPipeline
+    public static class ColorDetection extends OpenCvPipeline
     {
 
         private int red;

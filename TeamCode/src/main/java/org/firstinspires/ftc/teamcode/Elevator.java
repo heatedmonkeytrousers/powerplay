@@ -114,6 +114,11 @@ public class Elevator extends Thread {
         }
     }
     public void drop () {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+
+        }
         setPosition(-1, elevatorDrive.getCurrentPosition() - 500);
         totalCounts = elevatorDrive.getCurrentPosition();
         try {
