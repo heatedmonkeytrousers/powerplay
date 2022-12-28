@@ -60,10 +60,10 @@ public class StandardSetupOpMode extends LinearOpMode {
         claw =new Claw(clawServo, null);
 
         // Build the elevator class
-        Elevator elevator = new Elevator(elevatorDrive,null, claw);
+        elevator = new Elevator(elevatorDrive,null, claw);
 
         // Build the Motion class and give it a motion object
-        Motion motion = new Motion (frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, null , elevator);
+        motion = new Motion (frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, null , elevator);
         elevator.setMotion(motion);
 
         // Wait for the user to start the autonomous operation

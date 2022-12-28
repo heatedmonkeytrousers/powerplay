@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw extends  Thread {
     static public double START_MAX_POS = 0.26;
-    static final double MAX_POS     =  0.23;
+    static final double MAX_POS     =  0.22;
     static final double MIN_POS     =  0.1;
     private Servo clawServo;
     private Gamepad gamepad;
