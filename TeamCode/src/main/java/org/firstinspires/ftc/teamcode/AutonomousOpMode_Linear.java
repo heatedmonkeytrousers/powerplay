@@ -25,12 +25,15 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         // Call standard setup
         super.runOpMode();
 
+        // Determine parking spot
+        Motion.PARKING_SPOT parkingSpot = Motion.PARKING_SPOT.PARK_THREE;
+
         // Autonomous time!!!!!
         // This code is written from the right side of the field
         // We use direction to mirror the left side of the field
         claw.closeClaw();
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
-        motion.translate (Motion.Direction.FORWARD, 2.7, 0.6);
+        motion.translate (Motion.Direction.FORWARD, 2.7, 0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.HIGH);
         motion.translate(Motion.Direction.BACKWARD, 0.45, 0.5);
         motion.rotation (Motion.Direction.LEFT,direction * 45,0.5);
@@ -40,7 +43,7 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
         motion.rotation(Motion.Direction.RIGHT, direction * 135,0.5);
         claw.openClaw();
-        motion.translate (Motion.Direction.FORWARD,1.05,0.5);
+        motion.translate (Motion.Direction.FORWARD,0.9,0.5);
         sleep(300);
         claw.closeClaw();
         sleep(400);
@@ -48,11 +51,21 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         sleep(400);
         motion.translate(Motion.Direction.BACKWARD, 1,0.5);
         motion.rotation(Motion.Direction.RIGHT, direction * 45,0.5);
-        motion.translate (Motion.Direction.FORWARD, .35,0.5);
+        motion.translate (Motion.Direction.FORWARD, .35,0.45);
         elevator.drop();
-        motion.translate (Motion.Direction.BACKWARD, .35,0.5);
-        motion.rotation(Motion.Direction.RIGHT, direction * 45,0.5);
-        motion.translate (Motion.Direction.FORWARD, .5,0.5);
+        sleep(300);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.GROUND);
+        motion.translate (Motion.Direction.BACKWARD, .35,0.45);
+        motion.rotation(Motion.Direction.LEFT, direction * 45,0.5);
+        switch(parkingSpot){
+            case PARK_ONE:
+                motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
+                break;
+            case PARK_TWO:
+                break;
+            case PARK_THREE:
+                motion.translate(Motion.Direction.FORWARD, 0.9, 0.75);
+                break;
+        }
     }
 }
