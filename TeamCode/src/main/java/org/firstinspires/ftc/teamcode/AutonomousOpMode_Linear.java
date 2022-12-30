@@ -11,9 +11,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="Robot: Generic Automation", group="Robot")
 @Disabled
 public class AutonomousOpMode_Linear extends StandardSetupOpMode {
-    private double direction = 1.0;
+    private boolean isLeft;
+    private double direction;
 
     public AutonomousOpMode_Linear( boolean isLeft ){
+        this.isLeft = isLeft;
         if(isLeft)
             direction = -1.0;
         else
@@ -59,12 +61,18 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         motion.rotation(Motion.Direction.LEFT, direction * 45,0.5);
         switch(parkingSpot){
             case PARK_ONE:
-                motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
+                if(isLeft)
+                    motion.translate(Motion.Direction.FORWARD, 1.0, 0.75);
+                else
+                    motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
                 break;
             case PARK_TWO:
                 break;
             case PARK_THREE:
-                motion.translate(Motion.Direction.FORWARD, 1.0, 0.75);
+                if(isLeft)
+                    motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
+                else
+                    motion.translate(Motion.Direction.FORWARD, 1.0, 0.75);
                 break;
         }
     }
