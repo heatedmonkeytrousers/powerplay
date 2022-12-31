@@ -16,6 +16,17 @@ public class Elevator extends Thread {
     public static int MIDDLE_POSITION = 6847;
     public static int HIGH_POSITION = 9450;
 
+    public static int CONE_5_POS = 1529;
+    public static int CONE_4_POS = 1145;
+    public static int CONE_3_POS = 748;
+    public static int CONE_2_POS = 400;
+    public static int CONE_1_POS = GROUND_POSITION;
+    public static int CONE_WIGGLE = (int)(CONE_2_POS * 0.1);
+
+    public static double ELEVATOR_SPEED = 1.5;
+    public static double MIN_ELEVATOR_SPEED = -2.0;
+    public static double MAX_ELEVATOR_SPEED = 2.0;
+
     private DcMotor elevatorDrive;
     private int totalCounts;
     private Gamepad gamepad;
@@ -39,9 +50,9 @@ public class Elevator extends Thread {
         CONE_1
     }
 
-    public Elevator(DcMotor elevatorDrive, Gamepad gamepad2, Claw claw) {
+    public Elevator(DcMotor elevatorDrive, Gamepad gamepad, Claw claw) {
         this.elevatorDrive = elevatorDrive;
-        this.gamepad = gamepad2;
+        this.gamepad = gamepad;
         this.claw = claw;
         this.motion = null;
     }
@@ -58,7 +69,7 @@ public class Elevator extends Thread {
     }
 
     private void setPosition(double power, int position) {
-        power = Range.clip(power, -1.0, 1.5);
+        power = Range.clip(power, MIN_ELEVATOR_SPEED, MAX_ELEVATOR_SPEED);
         elevatorDrive.setTargetPosition(position);
         elevatorDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         elevatorDrive.setPower(power);
@@ -95,31 +106,26 @@ public class Elevator extends Thread {
                 setPosition(power,elevatorDrive.getCurrentPosition()+250);
                 break;
             case CONE_5:
-                setPosition(power, 1529);
+                setPosition(power, CONE_5_POS);
                 break;
             case CONE_4:
-                setPosition(power,1145);
+                setPosition(power,CONE_4_POS);
                 break;
             case CONE_3:
-                setPosition(power, 748);
+                setPosition(power, CONE_3_POS);
                 break;
             case CONE_2:
-                setPosition(power, 400);
+                setPosition(power, CONE_2_POS);
                 break;
             case CONE_1:
-                setPosition(power, 0);
+                setPosition(power, CONE_1_POS);
                 break;
             default:
                 return;
         }
     }
     public void drop () {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-
-        }
-        setPosition(-1, elevatorDrive.getCurrentPosition() - 500);
+        setPosition(-ELEVATOR_SPEED, elevatorDrive.getCurrentPosition() - 500);
         totalCounts = elevatorDrive.getCurrentPosition();
         try {
             Thread.sleep(500);
@@ -140,35 +146,62 @@ public class Elevator extends Thread {
 
             // The set buttons for the elevators highs
             if (gamepad.a) {
-                setPosition(-1, GROUND_POSITION);
+                setPosition(-ELEVATOR_SPEED, GROUND_POSITION);
 
             } else if (gamepad.b) {
 
-                setPosition(1, LOW_POSITION);
+                setPosition(ELEVATOR_SPEED, LOW_POSITION);
 
             } else if (gamepad.x) {
 
-                setPosition(1, MIDDLE_POSITION);
+                setPosition(ELEVATOR_SPEED, MIDDLE_POSITION);
 
             } else if (gamepad.y) {
-                    setPosition(1, HIGH_POSITION);
+                    setPosition(ELEVATOR_SPEED, HIGH_POSITION);
 
             } else if (gamepad.dpad_down) {
-                setPosition(-1, elevatorDrive.getCurrentPosition()-150);
+                int pos = elevatorDrive.getCurrentPosition()-100;
+                if(pos<GROUND_POSITION) pos = GROUND_POSITION;
+                setPosition(-ELEVATOR_SPEED, pos);
 
             } else if (gamepad.dpad_up) {
-                setPosition(1, elevatorDrive.getCurrentPosition()+150);
+                int pos = elevatorDrive.getCurrentPosition()+100;
+                if(pos>HIGH_POSITION) pos = HIGH_POSITION;
+                setPosition(ELEVATOR_SPEED, pos);
 
             } else if (gamepad.back) {
                 drop();
+            } else if (gamepad.dpad_left) {
+                int pos = elevatorDrive.getCurrentPosition();
+                if (pos > CONE_5_POS + CONE_WIGGLE){
+                    setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_5);
+                } else if (pos > CONE_4_POS + CONE_WIGGLE){
+                    setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_4);
+                } else if (pos > CONE_3_POS + CONE_WIGGLE){
+                    setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_3);
+                } else if (pos > CONE_2_POS + CONE_WIGGLE){
+                    setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_2);
+                }
+                else{
+                    setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_1);
+                }
             } else if (gamepad.dpad_right) {
-                if (elevatorDrive.getCurrentPosition() < 1529 + 1529*0.1 && elevatorDrive.getCurrentPosition() > 1529 - 1529 * 0.1) {
-                    setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
-                } else {
-                    setPosition(-1, ELEVATOR_HEIGHT.CONE_5);
+                int pos = elevatorDrive.getCurrentPosition();
+                if(pos < CONE_1_POS){
+                    setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_1);
+                } else if (pos < CONE_2_POS - CONE_WIGGLE){
+                    setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_2);
+                } else if (pos < CONE_3_POS - CONE_WIGGLE){
+                    setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_3);
+                } else if (pos < CONE_4_POS - CONE_WIGGLE){
+                    setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_4);
+                } else if (pos < CONE_5_POS - CONE_WIGGLE){
+                    setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_5);
+                }
+                else{
+                    setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_1);
                 }
             }
-
         }
     }
 }

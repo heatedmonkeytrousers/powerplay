@@ -57,7 +57,7 @@ public class StandardSetupOpMode extends LinearOpMode {
         elevatorDrive.setTargetPosition(0);
 
         // Build the Claw class
-        claw =new Claw(clawServo, null);
+        claw = new Claw(clawServo, null);
 
         // Build the elevator class
         elevator = new Elevator(elevatorDrive,null, claw);
