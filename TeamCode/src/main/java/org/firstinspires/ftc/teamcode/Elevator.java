@@ -39,9 +39,9 @@ public class Elevator extends Thread {
         CONE_1
     }
 
-    public Elevator(DcMotor elevatorDrive, Gamepad gamepad, Claw claw) {
+    public Elevator(DcMotor elevatorDrive, Gamepad gamepad2, Claw claw) {
         this.elevatorDrive = elevatorDrive;
-        this.gamepad = gamepad;
+        this.gamepad = gamepad2;
         this.claw = claw;
         this.motion = null;
     }

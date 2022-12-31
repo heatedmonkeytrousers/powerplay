@@ -32,7 +32,11 @@ public class Motion extends Thread{
         FORWARD,
         RIGHT,
         BACKWARD,
-        LEFT
+        LEFT,
+        UP_SQUARE,
+        DOWN_SQUARE,
+        LEFT_SQUARE,
+        RIGHT_SQUARE
     }
 
     public enum PARKING_SPOT {
@@ -76,6 +80,7 @@ public class Motion extends Thread{
                 frontRightPower *= 0.75;
                 rearRightPower *=0.75;
             }
+
             // Send calculated power to wheels
             frontLeftDrive.setPower(frontLeftPower);
             rearLeftDrive.setPower(rearLeftPower);
@@ -126,6 +131,18 @@ public class Motion extends Thread{
                 frontRightPosition -= TRANSLATE_LR * squares;
                 rearLeftPosition -= TRANSLATE_LR * squares;
                 rearRightPosition += TRANSLATE_LR * squares;
+                break;
+            case UP_SQUARE:
+                translate(Direction.FORWARD, 1, 1);
+                break;
+            case DOWN_SQUARE:
+                translate(Direction.BACKWARD, 1, 1);
+                break;
+            case LEFT_SQUARE:
+                translate(Direction.LEFT, 1, 1);
+                break;
+            case RIGHT_SQUARE:
+                translate(Direction.RIGHT, 1, 1);
                 break;
             default:
                 // We should never get here!
