@@ -104,8 +104,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
         //Launch Threads
 
-        Claw claw = new Claw(clawServo, gamepad1);
-        Elevator elevator = new Elevator(elevatorDrive, gamepad1, claw);
+        Claw claw = new Claw(clawServo, gamepad2);
+        Elevator elevator = new Elevator(elevatorDrive, gamepad2, claw);
         elevator.start();
 
         claw.start();

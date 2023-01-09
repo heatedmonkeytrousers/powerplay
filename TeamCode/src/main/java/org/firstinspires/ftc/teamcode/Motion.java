@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
-public class Motion extends Thread{
+public class Motion extends Thread {
     public static int LOW_POSITION = 3941;
     public static int MIDDLE_POSITION = 6647;
     public static int HIGH_POSITION = 9700;
@@ -27,8 +27,7 @@ public class Motion extends Thread{
     private Elevator elevator;
     private int totalCounts;
 
-    public enum Direction
-    {
+    public enum Direction {
         FORWARD,
         RIGHT,
         BACKWARD,
@@ -41,7 +40,7 @@ public class Motion extends Thread{
         PARK_THREE
     }
 
-    public Motion (DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor rearLeftDrive, DcMotor rearRightDrive, Gamepad gamepad, Elevator elevator) {
+    public Motion(DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor rearLeftDrive, DcMotor rearRightDrive, Gamepad gamepad, Elevator elevator) {
         this.frontLeftDrive = frontLeftDrive;
         this.frontRightDrive = frontRightDrive;
         this.rearLeftDrive = rearLeftDrive;
@@ -79,8 +78,28 @@ public class Motion extends Thread{
                 frontLeftPower *= 0.75;
                 rearLeftPower *= 0.75;
                 frontRightPower *= 0.75;
-                rearRightPower *=0.75;
+                rearRightPower *= 0.75;
             }
+            if (gamepad.right_bumper) {
+                frontLeftPower *= 2;
+                rearLeftPower *= 2;
+                frontRightPower *= 2;
+                rearRightPower *= 2;
+            } else if (gamepad.a) {
+                translate(Direction.BACKWARD, 0.23, 0.5);
+            } else if (gamepad.dpad_up) {
+                translate(Direction.FORWARD, 1, 1);
+
+            } else if (gamepad.dpad_down) {
+                translate(Direction.BACKWARD, 1, 1);
+
+            } else if (gamepad.dpad_left) {
+                translate(Direction.LEFT, 1, 1);
+
+            } else if (gamepad.dpad_right) {
+                translate(Direction.RIGHT, 1, 1);
+            }
+
             // Send calculated power to wheels
             frontLeftDrive.setPower(frontLeftPower);
             rearLeftDrive.setPower(rearLeftPower);
@@ -107,7 +126,7 @@ public class Motion extends Thread{
         int rearLeftPosition = rearLeftDrive.getCurrentPosition();
 
         // Determine power
-        switch(direction){
+        switch (direction) {
             case FORWARD:
                 frontLeftPosition -= TRANSLATE_FB * squares;
                 frontRightPosition -= TRANSLATE_FB * squares;
@@ -152,21 +171,27 @@ public class Motion extends Thread{
         frontRightDrive.setPower(power);
         rearLeftDrive.setPower(power);
         rearRightDrive.setPower(power);
-        while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()){ }
+
+        while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()) {
+        }
 
         // reset mode
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         rearLeftDrive.setPower(0);
         rearRightDrive.setPower(0);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void rotation (Direction direction, double angle, double power) {
+    public void rotation(Direction direction, double angle, double power) {
 
         //ensure good input
         power = Range.clip(Math.abs(power), 0, 1.0);
 
-        int rotation = (int)(ROTATE_360 * angle / 360);
+        int rotation = (int) (ROTATE_360 * angle / 360);
 
         // Get the currentModes
         DcMotor.RunMode frontLeftMode = frontLeftDrive.getMode();
@@ -181,7 +206,7 @@ public class Motion extends Thread{
         int rearLeftPosition = rearLeftDrive.getCurrentPosition();
 
         // Determine power
-        switch(direction){
+        switch (direction) {
             case FORWARD:
             case RIGHT:
 
@@ -222,7 +247,8 @@ public class Motion extends Thread{
         rearRightDrive.setPower(power);
 
         // will wait till in position
-        while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()){}
+        while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()) {
+        }
 
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
