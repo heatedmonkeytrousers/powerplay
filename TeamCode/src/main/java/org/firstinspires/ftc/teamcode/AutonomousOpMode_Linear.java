@@ -39,13 +39,13 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.HIGH);
         motion.translate(Motion.Direction.BACKWARD, 0.45, 0.5);
         motion.rotation (Motion.Direction.LEFT,direction * 45,0.5);
-        motion.translate (Motion.Direction.FORWARD, .3,0.5);
+        motion.translate (Motion.Direction.FORWARD, .7,0.5);
         elevator.drop();
-        motion.translate (Motion.Direction.BACKWARD, .3,0.5);
+        motion.translate (Motion.Direction.BACKWARD, .6,0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
         motion.rotation(Motion.Direction.RIGHT, direction * 135,0.5);
         claw.openClaw();
-        motion.translate (Motion.Direction.FORWARD,0.95,0.5);
+        motion.translate (Motion.Direction.FORWARD,1,0.5);
         sleep(300);
         claw.closeClaw();
         sleep(400);
@@ -53,11 +53,10 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         sleep(400);
         motion.translate(Motion.Direction.BACKWARD, 1,0.5);
         motion.rotation(Motion.Direction.RIGHT, direction * 45,0.5);
-        motion.translate (Motion.Direction.FORWARD, .35,0.45);
+        motion.translate (Motion.Direction.FORWARD, .65,0.45);
         elevator.drop();
-        sleep(300);
-        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.GROUND);
-        motion.translate (Motion.Direction.BACKWARD, .35,0.45);
+        motion.translate(Motion.Direction.FORWARD,.1,.45);
+        motion.translate (Motion.Direction.BACKWARD, .65,0.45);
         motion.rotation(Motion.Direction.LEFT, direction * 45,0.5);
         switch(parkingSpot){
             case PARK_ONE:
@@ -69,10 +68,14 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
             case PARK_TWO:
                 break;
             case PARK_THREE:
-                if(isLeft)
+                if(isLeft) {
+                    elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
                     motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
-                else
+                }
+                else {
+                    elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
                     motion.translate(Motion.Direction.FORWARD, 1.0, 0.75);
+                }
                 break;
         }
     }

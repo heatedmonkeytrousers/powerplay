@@ -53,6 +53,11 @@ public class Motion extends Thread{
     @Override
     public void run() {
         while (!isInterrupted()) {
+            // Debug
+            if(gamepad.start){
+                rotation(Motion.Direction.RIGHT, 90, 0.5);
+                continue;
+            }
             // Setup a variable for each drive wheel to save power level for telemetry
             double frontLeftPower;
             double frontRightPower;

@@ -125,7 +125,7 @@ public class Elevator extends Thread {
         }
     }
     public void drop () {
-        setPosition(-ELEVATOR_SPEED, elevatorDrive.getCurrentPosition() - 500);
+        setPosition(-ELEVATOR_SPEED, elevatorDrive.getCurrentPosition() - 600);
         totalCounts = elevatorDrive.getCurrentPosition();
         try {
             Thread.sleep(500);
