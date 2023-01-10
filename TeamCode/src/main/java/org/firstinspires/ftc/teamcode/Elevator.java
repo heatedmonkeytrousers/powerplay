@@ -16,6 +16,8 @@ public class Elevator extends Thread {
     public static int MIDDLE_POSITION = 6847;
     public static int HIGH_POSITION = 9450;
 
+    public static int DROP_AMOUNT = 750;
+
     public static int CONE_5_POS = 1529;
     public static int CONE_4_POS = 1145;
     public static int CONE_3_POS = 748;
@@ -91,9 +93,9 @@ public class Elevator extends Thread {
                 setPosition(power, HIGH_POSITION);
                 break;
             case DROP:
-                setPosition(power, elevatorDrive.getCurrentPosition() - 500);
+                setPosition(power, elevatorDrive.getCurrentPosition() - DROP_AMOUNT);
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(DROP_AMOUNT);
                 } catch (InterruptedException e) {
 
                 }
@@ -125,15 +127,14 @@ public class Elevator extends Thread {
         }
     }
     public void drop () {
-        setPosition(-ELEVATOR_SPEED, elevatorDrive.getCurrentPosition() - 600);
+        setPosition(-ELEVATOR_SPEED, elevatorDrive.getCurrentPosition() - DROP_AMOUNT);
         totalCounts = elevatorDrive.getCurrentPosition();
         try {
-            Thread.sleep(500);
+            Thread.sleep(DROP_AMOUNT);
         } catch (InterruptedException e) {
 
         }
         claw.openClaw();
-
     }
 
     @Override

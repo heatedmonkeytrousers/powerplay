@@ -34,18 +34,19 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         // This code is written from the right side of the field
         // We use direction to mirror the left side of the field
         claw.closeClaw();
+        sleep(500);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
         motion.translate (Motion.Direction.FORWARD, 2.7, 0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.HIGH);
         motion.translate(Motion.Direction.BACKWARD, 0.45, 0.5);
         motion.rotation (Motion.Direction.LEFT,direction * 45,0.5);
-        motion.translate (Motion.Direction.FORWARD, .7,0.5);
+        motion.translate (Motion.Direction.FORWARD, 0.65,0.5);
         elevator.drop();
-        motion.translate (Motion.Direction.BACKWARD, .6,0.5);
+        motion.translate (Motion.Direction.BACKWARD, 0.6,0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
-        motion.rotation(Motion.Direction.RIGHT, direction * 135,0.5);
+        motion.rotation(Motion.Direction.RIGHT, direction * 136,0.5);
         claw.openClaw();
-        motion.translate (Motion.Direction.FORWARD,1,0.5);
+        motion.translate (Motion.Direction.FORWARD,0.95,0.5);
         sleep(300);
         claw.closeClaw();
         sleep(400);
@@ -53,11 +54,13 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         sleep(400);
         motion.translate(Motion.Direction.BACKWARD, 1,0.5);
         motion.rotation(Motion.Direction.RIGHT, direction * 45,0.5);
-        motion.translate (Motion.Direction.FORWARD, .65,0.45);
+        motion.translate (Motion.Direction.FORWARD, 0.7,0.5);
+        motion.lock();
         elevator.drop();
-        motion.translate(Motion.Direction.FORWARD,.1,.45);
-        motion.translate (Motion.Direction.BACKWARD, .65,0.45);
+        motion.unlock();
+        motion.translate (Motion.Direction.BACKWARD, 0.45,0.45);
         motion.rotation(Motion.Direction.LEFT, direction * 45,0.5);
+        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
         switch(parkingSpot){
             case PARK_ONE:
                 if(isLeft)
@@ -68,14 +71,10 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
             case PARK_TWO:
                 break;
             case PARK_THREE:
-                if(isLeft) {
-                    elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
+                if(isLeft)
                     motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
-                }
-                else {
-                    elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
+                else
                     motion.translate(Motion.Direction.FORWARD, 1.0, 0.75);
-                }
                 break;
         }
     }

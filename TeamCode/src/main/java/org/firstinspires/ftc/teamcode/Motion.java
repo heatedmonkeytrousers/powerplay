@@ -186,6 +186,44 @@ public class Motion extends Thread {
         rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public void lock(){
+
+        double power = 1;
+
+        // Get current positions
+        int frontLeftPosition = frontLeftDrive.getCurrentPosition();
+        int frontRightPosition = frontRightDrive.getCurrentPosition();
+        int rearRightPosition = rearRightDrive.getCurrentPosition();
+        int rearLeftPosition = rearLeftDrive.getCurrentPosition();
+
+        // Move until new positions
+        frontLeftDrive.setTargetPosition(frontLeftPosition);
+        frontRightDrive.setTargetPosition(frontRightPosition);
+        rearLeftDrive.setTargetPosition(rearLeftPosition);
+        rearRightDrive.setTargetPosition(rearRightPosition);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // will wait till in position
+        frontLeftDrive.setPower(power);
+        frontRightDrive.setPower(power);
+        rearLeftDrive.setPower(power);
+        rearRightDrive.setPower(power);
+    }
+
+    public void unlock(){
+
+        double power = 0;
+
+        // will wait till in position
+        frontLeftDrive.setPower(power);
+        frontRightDrive.setPower(power);
+        rearLeftDrive.setPower(power);
+        rearRightDrive.setPower(power);
+    }
+
     public void rotation(Direction direction, double angle, double power) {
 
         //ensure good input
