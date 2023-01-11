@@ -17,7 +17,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp //(name="Camera", group="Linear Opmode")
 public class Camera extends LinearOpMode{
     OpenCvWebcam webcam;
 
@@ -110,11 +109,11 @@ public class Camera extends LinearOpMode{
             Imgproc.rectangle(
                     input,
                     new Point (
-                            input.cols()/4,
-                            input.rows()/4),
+                            input.cols()/3,
+                            input.rows()/2.5),
                     new Point(
-                            input.cols()*(3f/4f),
-                            input.rows()*(3f/4f)),
+                            input.cols()*(3f/6f),
+                            input.rows()*(3f/5f)),
                     new Scalar(0, 0, 0), 1);
 
             /*

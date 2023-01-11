@@ -11,6 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+@TeleOp (name="Color Detection", group="Linear Opmode")
 public class Field extends LinearOpMode {
 
     OpenCvWebcam webcam;
