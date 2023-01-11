@@ -16,7 +16,7 @@ public class Elevator extends Thread {
     public static int MIDDLE_POSITION = 6847;
     public static int HIGH_POSITION = 9450;
 
-    public static int DROP_AMOUNT = 750;
+    public static int DROP_AMOUNT = 800;
 
     public static int CONE_5_POS = 1529;
     public static int CONE_4_POS = 1145;

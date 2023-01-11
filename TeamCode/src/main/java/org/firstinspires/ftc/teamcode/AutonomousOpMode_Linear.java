@@ -44,22 +44,22 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         elevator.drop();
         motion.translate (Motion.Direction.BACKWARD, 0.6,0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
-        motion.rotation(Motion.Direction.RIGHT, direction * 136,0.5);
+        motion.rotation(Motion.Direction.RIGHT, direction * 130,0.5);
         claw.openClaw();
-        motion.translate (Motion.Direction.FORWARD,0.95,0.5);
+        motion.translate (Motion.Direction.FORWARD,0.97,0.5);
         sleep(300);
         claw.closeClaw();
         sleep(400);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
         sleep(400);
-        motion.translate(Motion.Direction.BACKWARD, 1,0.5);
+        motion.translate(Motion.Direction.BACKWARD, 1.5,0.5);
         motion.rotation(Motion.Direction.RIGHT, direction * 45,0.5);
         motion.translate (Motion.Direction.FORWARD, 0.7,0.5);
         motion.lock();
         elevator.drop();
         motion.unlock();
-        motion.translate (Motion.Direction.BACKWARD, 0.45,0.45);
-        motion.rotation(Motion.Direction.LEFT, direction * 45,0.5);
+        motion.translate (Motion.Direction.BACKWARD, 0.55,0.45);
+        motion.rotation(Motion.Direction.LEFT, direction * 50,0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_4);
         switch(parkingSpot){
             case PARK_ONE:
