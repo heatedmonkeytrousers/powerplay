@@ -32,7 +32,7 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
 
             @Override
             public void onOpened() {
-                webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -66,7 +66,7 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
 
         //Below 100, below 50, above 150
         private double blueThreshR = 100;
-        private double blueThreshG = 110;
+        private double blueThreshG = 50;
         private double blueThreshB = 150;
 
         private int red;
@@ -90,7 +90,7 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
 
 
             Mat input2 = input;
-            input = input.submat(new Rect(220, 192, 100, 100));
+            input = input.submat(new Rect(220, 192, 80, 100));
 
 
             Core.extractChannel(input, redOutput, 0);
@@ -108,6 +108,10 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
             //Core.multiply(redOutput, new Scalar(128), redOutput);
 
             //Green Channel
+           // Scalar lowGreenScalar = new Scalar(100,0,100);
+            //Scalar highGreenScalar = new Scalar(255,150,255);
+
+            //Core.inRange(greenOutput, lowGreenScalar, highGreenScalar, greenOutput);
             Imgproc.threshold(redOutput, redTemp, greenThreshR, 255, Imgproc.THRESH_BINARY_INV);
             Imgproc.threshold(blueOutput, blueTemp, greenThreshB, 255, Imgproc.THRESH_BINARY_INV);
             Imgproc.threshold(greenOutput, greenTemp, greenThreshG, 255, Imgproc.THRESH_BINARY);
@@ -118,14 +122,11 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
             //Core.multiply(greenOutput, new Scalar(128), greenOutput);
 
             //Blue Channel
-            Imgproc.threshold(redOutput, redTemp, blueThreshR, 255, Imgproc.THRESH_BINARY_INV);
-            Imgproc.threshold(blueOutput, blueTemp, blueThreshB, 255, Imgproc.THRESH_BINARY);
-            Imgproc.threshold(greenOutput, greenTemp, blueThreshG, 255, Imgproc.THRESH_BINARY_INV);
+            Scalar lowBlueScalar = new Scalar(100, 100, 0);
+            Scalar highBlueScalar = new Scalar(255, 255, 150);
+            Core.inRange(blueOutput, lowBlueScalar, highBlueScalar, blueOutput);
 
-            Core.bitwise_and(redTemp, blueTemp, blueOutput);
-            Core.bitwise_and(blueOutput, greenTemp, blueOutput);
-
-            //Core.multiply(blueOutput, new Scalar(128), blueOutput);
+            Core.multiply(blueOutput, new Scalar(255), blueOutput);
 
 
             if (gamepad1.dpad_up) {
@@ -138,19 +139,11 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 blueThreshG -= 1;
             }
-            if (gamepad1.right_bumper) {
+            if (gamepad1.right_trigger == 1) {
                 blueThreshB += 1;
-            } else if (gamepad1.left_bumper) {
+            } else if (gamepad1.left_trigger == 1) {
                 blueThreshB -= 1;
             }
-
-                /*
-            } else if (gamepad1.right_trigger == 1) {
-                highBlack += 1;
-            } else if (gamepad1.left_trigger == 1) {
-                highBlack -= 1;
-            }
-             */
 
                 if (gamepad1.b) {
                     output = redOutput;
@@ -165,26 +158,6 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
                     output = input2;
                     telemetry.addData("Current Output", "Regular");
                 }
-
-                //Mean
-                //Red 200, 70, 85
-                //Blue 40, 150, 190
-                //Green 70, 150, 80
-
-            /*
-            Scalar lowGreenScalar = new Scalar(0,140,0);
-            Scalar highGreenScalar = new Scalar(100,255,100);
-
-            Scalar lowRedScalar = new Scalar(180, 0, 0);
-            Scalar highRedScalar = new Scalar(255, 100, 100);
-
-            Scalar lowBlueScalar = new Scalar(0, 130, 170);
-            Scalar highBlueScalar = new Scalar(100, 170, 255);
-
-            Core.inRange(input, lowGreenScalar, highGreenScalar, greenOutput);
-            Core.inRange(input, lowRedScalar, highRedScalar, redOutput);
-            Core.inRange(input, lowBlueScalar, highBlueScalar, blueOutput);
-             */
 
                 red = Core.countNonZero(redOutput);
                 blue = Core.countNonZero(blueOutput);
@@ -209,7 +182,7 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
                                 192),
                         new Point(
                                 320,
-                                292),
+                                342),
                         new Scalar(0, 0, 0), 1);
 
                 telemetry.addData("Parking spot", position);
