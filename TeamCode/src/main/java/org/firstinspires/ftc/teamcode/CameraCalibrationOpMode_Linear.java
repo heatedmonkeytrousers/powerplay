@@ -54,6 +54,7 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
 
 
     public class CameraCalibration extends OpenCvPipeline {
+        /*
         //Above 200, below 100, below 100
         private double redThreshR = 117;
         private double redThreshG = 100;
@@ -73,6 +74,8 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
         private int blue;
         private int green;
 
+         */
+
         private int position;
 
         Mat output = new Mat();
@@ -80,6 +83,7 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
         @Override
         public Mat processFrame(Mat input) {
 
+            /*
             Mat redOutput = new Mat();
             Mat blueOutput = new Mat();
             Mat greenOutput = new Mat();
@@ -88,11 +92,16 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
             Mat blueTemp = new Mat();
             Mat greenTemp = new Mat();
 
-
-            Mat input2 = input;
-            input = input.submat(new Rect(220, 192, 80, 100));
+             */
 
 
+            //Mat input2 = input;
+            input = input.submat(new Rect(860, 440, 80, 120));
+            output = input;
+
+            Scalar mu = Core.mean(input);
+            /*
+            //For Red Channel
             Core.extractChannel(input, redOutput, 0);
             Core.extractChannel(input, greenOutput, 1);
             Core.extractChannel(input, blueOutput, 2);
@@ -105,19 +114,36 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
             Core.bitwise_and(redTemp, blueTemp, redOutput);
             Core.bitwise_and(redOutput, greenTemp, redOutput);
 
+             */
+
             //Core.multiply(redOutput, new Scalar(128), redOutput);
 
             //Green Channel
-           // Scalar lowGreenScalar = new Scalar(100,0,100);
-            //Scalar highGreenScalar = new Scalar(255,150,255);
 
-            //Core.inRange(greenOutput, lowGreenScalar, highGreenScalar, greenOutput);
-            Imgproc.threshold(redOutput, redTemp, greenThreshR, 255, Imgproc.THRESH_BINARY_INV);
-            Imgproc.threshold(blueOutput, blueTemp, greenThreshB, 255, Imgproc.THRESH_BINARY_INV);
-            Imgproc.threshold(greenOutput, greenTemp, greenThreshG, 255, Imgproc.THRESH_BINARY);
+            if (mu.val[0] > 40 && mu.val[0] < 70 && mu.val[1] > 130 && mu.val[1] < 255 && mu.val[2] > 90 && mu.val[2] < 130) {
+                position = 2;
+            } else if (mu.val[0] > 0 && mu.val[0] < 50 && mu.val[1] > 100 && mu.val[1] < 150 && mu.val[2] > 170 && mu.val[2] < 255) {
+                position = 3;
+            } else {
+                position = 1;
+            }
 
-            Core.bitwise_and(redTemp, blueTemp, greenOutput);
-            Core.bitwise_and(greenOutput, greenTemp, greenOutput);
+            /*
+
+            Scalar lowGreenScalar = new Scalar(100,130,30);
+            Scalar highGreenScalar = new Scalar(140,255,90);
+
+            Core.inRange(input, lowGreenScalar, highGreenScalar, greenOutput);
+
+            green = Core.countNonZero(greenOutput);
+
+            Core.multiply(greenOutput, new Scalar(255), greenOutput);
+            //Imgproc.threshold(redOutput, redTemp, greenThreshR, 255, Imgproc.THRESH_BINARY_INV);
+            //Imgproc.threshold(blueOutput, blueTemp, greenThreshB, 255, Imgproc.THRESH_BINARY_INV);
+            //Imgproc.threshold(greenOutput, greenTemp, greenThreshG, 255, Imgproc.THRESH_BINARY);
+
+            //Core.bitwise_and(redTemp, blueTemp, greenOutput);
+            //Core.bitwise_and(greenOutput, greenTemp, greenOutput);
 
             //Core.multiply(greenOutput, new Scalar(128), greenOutput);
 
@@ -126,18 +152,20 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
             Scalar highBlueScalar = new Scalar(255, 255, 150);
             Core.inRange(blueOutput, lowBlueScalar, highBlueScalar, blueOutput);
 
+            blue = Core.countNonZero(blueOutput);
+
             Core.multiply(blueOutput, new Scalar(255), blueOutput);
 
 
             if (gamepad1.dpad_up) {
-                blueThreshR += 1;
+
             } else if (gamepad1.dpad_down) {
-                blueThreshR -= 1;
+
             }
             if (gamepad1.dpad_right) {
-                blueThreshG += 1;
+
             } else if (gamepad1.dpad_left) {
-                blueThreshG -= 1;
+
             }
             if (gamepad1.right_trigger == 1) {
                 blueThreshB += 1;
@@ -160,10 +188,9 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
                 }
 
                 red = Core.countNonZero(redOutput);
-                blue = Core.countNonZero(blueOutput);
-                green = Core.countNonZero(greenOutput);
+                //blue = Core.countNonZero(blueOutput);
+                //green = Core.countNonZero(greenOutput);
 
-                Scalar mu = Core.mean(input);
 
                 if (red > blue && red > green) {
                     position = 1;
@@ -175,27 +202,23 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
                     position = 3;
                 }
 
+             */
+
                 Imgproc.rectangle(
                         output,
                         new Point(
-                                220,
-                                192),
+                                860,
+                                440),
                         new Point(
-                                320,
-                                342),
-                        new Scalar(0, 0, 0), 1);
+                                940,
+                                590),
+                        new Scalar(0, 0, 0), 5);
 
                 telemetry.addData("Parking spot", position);
-                telemetry.addData("Red Pixels", red);
-                telemetry.addData("Blue Pixels", blue);
-                telemetry.addData("Green Pixels", green);
-                telemetry.addData("GreenThreshR", blueThreshR);
-                telemetry.addData("GreenThreshG", blueThreshG);
-                telemetry.addData("GreenThreshB", blueThreshB);
-                telemetry.addData("Mean", mu);
-                telemetry.addLine("Dpad up/down: Change Red Thresh");
-                telemetry.addLine("Dpad left/right: Change Blue Thresh");
-                telemetry.addLine("Right/Left Bumper: Change Green Thresh");
+                //telemetry.addData("Red Pixels", red);
+                //telemetry.addData("Blue Pixels", blue);
+                //telemetry.addData("Green Pixels", green);
+                telemetry.addData("Mean", "%d %d %d", (int)mu.val[0], (int)mu.val[1], (int)mu.val[2]);
                 telemetry.update();
                 sleep(100);
 
