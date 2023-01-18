@@ -51,8 +51,6 @@ public class CameraCalibrationOpMode_Linear extends LinearOpMode {
 
     }
 
-
-
     public class CameraCalibration extends OpenCvPipeline {
 
         private int position;
