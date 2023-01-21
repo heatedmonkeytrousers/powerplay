@@ -155,11 +155,6 @@ public class StandardSetupOpMode extends LinearOpMode {
                 position = Motion.PARKING_SPOT.PARK_THREE;
             }
 
-            //Allows the user to see the cropped input
-            if (gamepad1.y) {
-                output = input;
-            }
-
             //Displays a rectangle for lining up the webcam
             Imgproc.rectangle(
                     output,
@@ -171,8 +166,8 @@ public class StandardSetupOpMode extends LinearOpMode {
                             590),
                     new Scalar(0, 0, 0), 5);
 
-
+            webcam.closeCameraDevice();
             return output;
         }
     }
-};
+}
