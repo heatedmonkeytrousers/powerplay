@@ -34,31 +34,31 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         // This code is written from the right side of the field
         // We use direction to mirror the left side of the field
         claw.closeClaw();
+        sleep(500);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
         motion.translate (Motion.Direction.FORWARD, 2.7, 0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.HIGH);
-        motion.translate(Motion.Direction.BACKWARD, 0.45, 0.5);
+        motion.translate(Motion.Direction.BACKWARD, 0.50, 0.5);
         motion.rotation (Motion.Direction.LEFT,direction * 45,0.5);
-        motion.translate (Motion.Direction.FORWARD, .3,0.5);
+        motion.translate (Motion.Direction.FORWARD, 0.65,0.5);
         elevator.drop();
-        motion.translate (Motion.Direction.BACKWARD, .3,0.5);
+        motion.translate (Motion.Direction.BACKWARD, 0.6,0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
         motion.rotation(Motion.Direction.RIGHT, direction * 135,0.5);
         claw.openClaw();
-        motion.translate (Motion.Direction.FORWARD,0.95,0.5);
-        sleep(300);
+        motion.translate (Motion.Direction.FORWARD,1,0.5);
         claw.closeClaw();
-        sleep(400);
+        sleep(300);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
         sleep(400);
         motion.translate(Motion.Direction.BACKWARD, 1,0.5);
         motion.rotation(Motion.Direction.RIGHT, direction * 45,0.5);
-        motion.translate (Motion.Direction.FORWARD, .35,0.45);
+        motion.translate (Motion.Direction.FORWARD, 0.7,0.4);
+        motion.translate (Motion.Direction.BACKWARD, 0.2,0.4);
         elevator.drop();
-        sleep(300);
-        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.GROUND);
-        motion.translate (Motion.Direction.BACKWARD, .35,0.45);
+        motion.translate (Motion.Direction.BACKWARD, 0.30,0.4);
         motion.rotation(Motion.Direction.LEFT, direction * 45,0.5);
+        elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.GROUND);
         switch(parkingSpot){
             case PARK_ONE:
                 if(isLeft)

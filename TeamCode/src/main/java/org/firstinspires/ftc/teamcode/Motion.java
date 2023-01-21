@@ -52,6 +52,11 @@ public class Motion extends Thread {
     @Override
     public void run() {
         while (!isInterrupted()) {
+            // Debug
+            if(gamepad.start){
+                rotation(Motion.Direction.RIGHT, 90, 0.5);
+                continue;
+            }
             // Setup a variable for each drive wheel to save power level for telemetry
             double frontLeftPower;
             double frontRightPower;
@@ -179,6 +184,44 @@ public class Motion extends Thread {
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void lock(){
+
+        double power = 1;
+
+        // Get current positions
+        int frontLeftPosition = frontLeftDrive.getCurrentPosition();
+        int frontRightPosition = frontRightDrive.getCurrentPosition();
+        int rearRightPosition = rearRightDrive.getCurrentPosition();
+        int rearLeftPosition = rearLeftDrive.getCurrentPosition();
+
+        // Move until new positions
+        frontLeftDrive.setTargetPosition(frontLeftPosition);
+        frontRightDrive.setTargetPosition(frontRightPosition);
+        rearLeftDrive.setTargetPosition(rearLeftPosition);
+        rearRightDrive.setTargetPosition(rearRightPosition);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rearRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // will wait till in position
+        frontLeftDrive.setPower(power);
+        frontRightDrive.setPower(power);
+        rearLeftDrive.setPower(power);
+        rearRightDrive.setPower(power);
+    }
+
+    public void unlock(){
+
+        double power = 0;
+
+        // will wait till in position
+        frontLeftDrive.setPower(power);
+        frontRightDrive.setPower(power);
+        rearLeftDrive.setPower(power);
+        rearRightDrive.setPower(power);
     }
 
     public void rotation(Direction direction, double angle, double power) {
