@@ -28,7 +28,7 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         super.runOpMode();
 
         // Determine parking spot
-        Motion.PARKING_SPOT parkingSpot = Motion.PARKING_SPOT.PARK_THREE;
+        Motion.PARKING_SPOT parkingSpot = position;
 
         // Autonomous time!!!!!
         // This code is written from the right side of the field
