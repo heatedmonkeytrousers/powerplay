@@ -39,7 +39,7 @@ public class StandardSetupOpMode extends LinearOpMode {
     protected Motion motion = null;
 
     protected OpenCvWebcam webcam = null;
-    protected Scalar mu = null;
+    protected Scalar mu = new Scalar(0, 0, 0);
     protected double redDist = 0;
     protected double greenDist = 0;
     protected double blueDist = 0;
@@ -108,7 +108,7 @@ public class StandardSetupOpMode extends LinearOpMode {
 
         // Wait for the user to start the autonomous operation
         waitForStart();
-
+        telemetry.addData("Parking Spot", position);
         // Reset the 30 second runtime timer
         runtime.reset();
     }
