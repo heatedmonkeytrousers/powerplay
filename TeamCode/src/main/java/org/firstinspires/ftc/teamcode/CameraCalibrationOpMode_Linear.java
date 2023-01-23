@@ -9,27 +9,26 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @TeleOp(name = "Camera Calibration", group = "Linear Opmode")
-public class CameraCalibrationOpMode_Linear extends StandardSetupOpMode {
+public class CameraCalibrationOpMode_Linear extends CameraSetupOpMode {
     OpenCvWebcam webcam;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
+        super.runOpMode();
+        telemetry.addLine("Waiting for start");
+        telemetry.addData("Parking spot", position);
+        telemetry.addData("Red Dist", (int) redDist);
+        telemetry.addData("Green Dist", (int) greenDist);
+        telemetry.addData("Blue Dist", (int) blueDist);
+        telemetry.addData("Mean", "%d %d %d", (int) mu.val[0], (int) mu.val[1], (int) mu.val[2]);
+        telemetry.update();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addLine("Waiting for start");
-            telemetry.addData("Parking spot", position);
-            telemetry.addData("Red Dist", (int) redDist);
-            telemetry.addData("Green Dist", (int) greenDist);
-            telemetry.addData("Blue Dist", (int) blueDist);
-            telemetry.addData("Mean", "%d %d %d", (int) mu.val[0], (int) mu.val[1], (int) mu.val[2]);
+            telemetry.addData("Parking Spot", position);
             telemetry.update();
-
             sleep(50);
         }
-
     }
-
-
 }

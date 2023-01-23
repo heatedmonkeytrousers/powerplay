@@ -2,17 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Robot: Generic Automation", group="Robot")
 @Disabled
 public class AutonomousOpMode_Linear extends StandardSetupOpMode {
-    private boolean isLeft;
-    private double direction;
+    private final boolean isLeft;
+    private final double direction;
 
     public AutonomousOpMode_Linear( boolean isLeft ){
         this.isLeft = isLeft;
@@ -27,8 +22,19 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         // Call standard setup
         super.runOpMode();
 
-        // Determine parking spot
+        // Initial parking spot
         Motion.PARKING_SPOT parkingSpot = position;
+
+        // Reset the 30 second runtime timer
+        runtime.reset();
+
+        // Wait to start autonomous
+        waitForStart();
+
+        // Determine parking spot
+        parkingSpot = position;
+        telemetry.addData("Parking Spot", position);
+        telemetry.update();
 
         // Autonomous time!!!!!
         // This code is written from the right side of the field
@@ -62,18 +68,22 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         switch(parkingSpot){
             case PARK_ONE:
                 if(isLeft)
-                    motion.translate(Motion.Direction.FORWARD, 1.0, 0.75);
+                    motion.translate(Motion.Direction.FORWARD, 0.8, 0.6);
                 else
                     motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
                 break;
             case PARK_TWO:
+                motion.translate(Motion.Direction.BACKWARD, 0.3, 0.75);
                 break;
             case PARK_THREE:
                 if(isLeft)
                     motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
                 else
-                    motion.translate(Motion.Direction.FORWARD, 1.0, 0.75);
+                    motion.translate(Motion.Direction.FORWARD, 0.8, 0.6);
                 break;
         }
+
+        // Wait for claw drop
+        sleep(4000);
     }
 }
