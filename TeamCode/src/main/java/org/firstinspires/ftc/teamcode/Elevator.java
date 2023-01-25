@@ -141,8 +141,7 @@ public class Elevator extends Thread {
     public void run() {
         while (!isInterrupted()) {
             double elevatorPower = gamepad.left_trigger - gamepad.right_trigger;
-            //elevatorPower = Range.clip(elevatorPower, -1.0, 1.5);
-            //elevatorDrive.setPower(elevatorPower);
+
             totalCounts = elevatorDrive.getCurrentPosition();
 
             // The set buttons for the elevators highs
@@ -162,7 +161,7 @@ public class Elevator extends Thread {
 
             } else if (gamepad.dpad_down) {
                 int pos = elevatorDrive.getCurrentPosition()-100;
-                if(pos<GROUND_POSITION) pos = GROUND_POSITION;
+                //if(pos<GROUND_POSITION) pos = GROUND_POSITION;
                 setPosition(-ELEVATOR_SPEED, pos);
 
             } else if (gamepad.dpad_up) {
@@ -172,6 +171,10 @@ public class Elevator extends Thread {
 
             } else if (gamepad.back) {
                 drop();
+            } else if (gamepad.start) {
+                elevatorDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                //elevatorDrive.setTargetPosition(0);
             } else if (gamepad.dpad_left) {
                 int pos = elevatorDrive.getCurrentPosition();
                 if (pos > CONE_5_POS + CONE_WIGGLE){

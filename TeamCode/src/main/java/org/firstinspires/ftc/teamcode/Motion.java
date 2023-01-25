@@ -98,6 +98,10 @@ public class Motion extends Thread {
 
             } else if (gamepad.dpad_right) {
                 translate(Direction.RIGHT, 1, 1);
+            } else if (gamepad.left_trigger > 0.5) {
+                rotation(Direction.LEFT, 45, 1);
+            } else if (gamepad.right_trigger > 0.5) {
+                rotation(Direction.RIGHT, 45, 1);
             }
 
             // Send calculated power to wheels
