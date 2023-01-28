@@ -160,12 +160,12 @@ public class Elevator extends Thread {
                     setPosition(ELEVATOR_SPEED, HIGH_POSITION);
 
             } else if (gamepad.dpad_down) {
-                int pos = elevatorDrive.getCurrentPosition()-100;
+                int pos = elevatorDrive.getCurrentPosition()-200;
                 //if(pos<GROUND_POSITION) pos = GROUND_POSITION;
                 setPosition(-ELEVATOR_SPEED, pos);
 
             } else if (gamepad.dpad_up) {
-                int pos = elevatorDrive.getCurrentPosition()+100;
+                int pos = elevatorDrive.getCurrentPosition()+200;
                 if(pos>HIGH_POSITION) pos = HIGH_POSITION;
                 setPosition(ELEVATOR_SPEED, pos);
 
@@ -173,7 +173,7 @@ public class Elevator extends Thread {
                 drop();
             } else if (gamepad.start) {
                 elevatorDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                //elevatorDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 //elevatorDrive.setTargetPosition(0);
             } else if (gamepad.dpad_left) {
                 int pos = elevatorDrive.getCurrentPosition();

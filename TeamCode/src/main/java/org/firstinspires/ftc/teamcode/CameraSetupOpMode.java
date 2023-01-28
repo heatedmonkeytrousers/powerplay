@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous(name = "Robot Setup Camera Super Class", group = "Robot")
 @Disabled
-public class CameraSetupOpMode extends LinearOpMode {
+public class                                        CameraSetupOpMode extends LinearOpMode {
 
     protected OpenCvWebcam webcam = null;
     protected Scalar mu = new Scalar(0, 0, 0);
@@ -69,9 +69,9 @@ public class CameraSetupOpMode extends LinearOpMode {
             mu = Core.mean(input);
 
             //Scalars for our ideal values
-            Scalar red = new Scalar(186, 37, 48);
-            Scalar green = new Scalar(48, 141, 106);
-            Scalar blue = new Scalar(1, 123, 187);
+            Scalar red = new Scalar(175, 48, 51);
+            Scalar green = new Scalar(54, 133, 113);
+            Scalar blue = new Scalar(8, 106, 171);
 
             //Determines the distance the averages are from our ideal values and normalizes them
             redDist = Math.sqrt(Math.pow((mu.val[0] - red.val[0]), 2) + Math.pow((mu.val[1] - red.val[1]), 2) + Math.pow((mu.val[2] - red.val[2]), 2));
