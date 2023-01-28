@@ -97,7 +97,6 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         elevatorDrive.setTargetPosition(0);
-        clawServo.setPosition(0.1);
 
         waitForStart();
         runtime.reset();
