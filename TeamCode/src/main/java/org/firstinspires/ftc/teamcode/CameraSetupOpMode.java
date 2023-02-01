@@ -102,6 +102,7 @@ public class                                        CameraSetupOpMode extends Li
                     new Scalar(0, 0, 0), 5);
 
             //webcam.closeCameraDevice();
+
             //  Debug
             telemetry.addData("Parking Spot", position);
             telemetry.update();
