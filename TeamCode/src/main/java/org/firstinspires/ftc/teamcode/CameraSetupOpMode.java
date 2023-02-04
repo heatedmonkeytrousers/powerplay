@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -16,6 +18,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @Autonomous(name = "Robot Setup Camera Super Class", group = "Robot")
 @Disabled
@@ -77,6 +83,24 @@ public class                                        CameraSetupOpMode extends Li
             redDist = Math.sqrt(Math.pow((mu.val[0] - red.val[0]), 2) + Math.pow((mu.val[1] - red.val[1]), 2) + Math.pow((mu.val[2] - red.val[2]), 2));
             greenDist = Math.sqrt(Math.pow((mu.val[0] - green.val[0]), 2) + Math.pow((mu.val[1] - green.val[1]), 2) + Math.pow((mu.val[2] - green.val[2]), 2));
             blueDist = Math.sqrt(Math.pow((mu.val[0] - blue.val[0]), 2) + Math.pow((mu.val[1] - blue.val[1]), 2) + Math.pow((mu.val[2] - blue.val[2]), 2));
+
+        /*
+            Mat cannyEdges = new Mat();
+            Mat hierarchy = new Mat();
+            List<MatOfPoint> contourList = new ArrayList<MatOfPoint>(); //A list to store all the contours
+
+            Imgproc.Canny(input, cannyEdges, 10, 100);
+            Imgproc.findContours(cannyEdges, contourList, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            //Drawing contours on a new image
+            Mat contours = new Mat();
+            contours.create(cannyEdges.rows(), cannyEdges.cols(), CvType.CV_8UC3);
+            Random r = new Random();
+            for (int i = 0; i < contourList.size(); i++) {
+                Imgproc.drawContours(contours, contourList, i, new Scalar(r.nextInt(255), r.nextInt(255), r.nextInt(255)), -1);
+            }
+         */
+
 
             //Determines position based on which distance is the smallest
             if (redDist < greenDist && redDist < blueDist) {

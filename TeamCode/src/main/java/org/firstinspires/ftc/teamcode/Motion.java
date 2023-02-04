@@ -16,15 +16,16 @@ public class Motion extends Thread {
 
     public static int ROTATE_360 = 3800;
 
-    private static double PF = 0.5;
+    private static double PF = 1;
 
-    private DcMotor frontLeftDrive;
-    private DcMotor frontRightDrive;
-    private DcMotor rearLeftDrive;
-    private DcMotor rearRightDrive;
-    private Gamepad gamepad;
+    private final DcMotor frontLeftDrive;
+    private final DcMotor frontRightDrive;
+    private final DcMotor rearLeftDrive;
+    private final DcMotor rearRightDrive;
+    private final Gamepad gamepad;
+    private final Claw claw;
 
-    private Elevator elevator;
+    private final Elevator elevator;
     private int totalCounts;
 
     public enum Direction {
@@ -40,13 +41,14 @@ public class Motion extends Thread {
         PARK_THREE
     }
 
-    public Motion(DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor rearLeftDrive, DcMotor rearRightDrive, Gamepad gamepad, Elevator elevator) {
+    public Motion(DcMotor frontLeftDrive, DcMotor frontRightDrive, DcMotor rearLeftDrive, DcMotor rearRightDrive, Gamepad gamepad, Elevator elevator, Claw claw) {
         this.frontLeftDrive = frontLeftDrive;
         this.frontRightDrive = frontRightDrive;
         this.rearLeftDrive = rearLeftDrive;
         this.rearRightDrive = rearRightDrive;
         this.elevator = elevator;
         this.gamepad = gamepad;
+        this.claw = claw;
     }
 
     @Override
@@ -81,12 +83,14 @@ public class Motion extends Thread {
                 rearRightPower *= 0.75;
             }
             if (gamepad.right_bumper) {
-                frontLeftPower *= 2;
-                rearLeftPower *= 2;
-                frontRightPower *= 2;
-                rearRightPower *= 2;
+                frontLeftPower *= 0.5;
+                rearLeftPower *= 0.5;
+                frontRightPower *= 0.5;
+                rearRightPower *= 0.5;
             } else if (gamepad.a) {
-                translate(Direction.BACKWARD, 0.23, 0.5);
+                claw.openClaw();
+            } else if (gamepad.b) {
+                claw.closeClaw();
             } else if (gamepad.dpad_up) {
                 translate(Direction.FORWARD, 1, 1);
 
@@ -100,6 +104,7 @@ public class Motion extends Thread {
                 translate(Direction.RIGHT, 1, 1);
             } else if (gamepad.left_trigger > 0.5) {
                 rotation(Direction.LEFT, 45, 1);
+
             } else if (gamepad.right_trigger > 0.5) {
                 rotation(Direction.RIGHT, 45, 1);
             }
@@ -176,8 +181,9 @@ public class Motion extends Thread {
         rearLeftDrive.setPower(power);
         rearRightDrive.setPower(power);
 
-        while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()) {
-        }
+            while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()) {
+            }
+
 
         // reset mode
         frontLeftDrive.setPower(0);
@@ -277,6 +283,7 @@ public class Motion extends Thread {
         frontRightDrive.setTargetPosition(frontRightPosition);
         rearLeftDrive.setTargetPosition(rearLeftPosition);
         rearRightDrive.setTargetPosition(rearRightPosition);
+
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -289,19 +296,21 @@ public class Motion extends Thread {
         rearRightDrive.setPower(power);
 
         // will wait till in position
-        while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()) {
-        }
 
-        frontLeftDrive.setPower(0);
-        frontRightDrive.setPower(0);
-        rearLeftDrive.setPower(0);
-        rearRightDrive.setPower(0);
+            while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()) {
+            }
 
-        // reset mode
-        frontLeftDrive.setMode(frontLeftMode);
-        frontRightDrive.setMode(frontRightMode);
-        rearLeftDrive.setMode(rearLeftMode);
-        rearRightDrive.setMode(rearRightMode);
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+            rearLeftDrive.setPower(0);
+            rearRightDrive.setPower(0);
+
+            // reset mode
+            frontLeftDrive.setMode(frontLeftMode);
+            frontRightDrive.setMode(frontRightMode);
+            rearLeftDrive.setMode(rearLeftMode);
+            rearRightDrive.setMode(rearRightMode);
+
 
     }
 }

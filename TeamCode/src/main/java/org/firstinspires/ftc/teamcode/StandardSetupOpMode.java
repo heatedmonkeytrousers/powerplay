@@ -78,7 +78,7 @@ public class StandardSetupOpMode extends CameraSetupOpMode {
         elevator = new Elevator(elevatorDrive, null, claw);
 
         // Build the Motion class and give it a motion object
-        motion = new Motion(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, null, elevator);
+        motion = new Motion(frontLeftDrive, frontRightDrive, rearLeftDrive, rearRightDrive, null, elevator, claw);
         elevator.setMotion(motion);
     }
 }
