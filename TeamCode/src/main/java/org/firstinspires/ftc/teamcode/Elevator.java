@@ -186,10 +186,7 @@ public class Elevator extends Thread {
                     setPosition(ELEVATOR_SPEED, pos);
 
                 } else if (gamepad.back) {
-                    drop();
-                } else if (gamepad.start) {
                     elevatorDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
                 } else if (gamepad.dpad_left) {
                     int pos = elevatorDrive.getCurrentPosition();
                     if (pos > CONE_5_POS + CONE_WIGGLE){

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.bluetooth.le.ScanCallback;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,6 +14,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -78,28 +81,38 @@ public class                                        CameraSetupOpMode extends Li
             Scalar red = new Scalar(175, 48, 51);
             Scalar green = new Scalar(54, 133, 113);
             Scalar blue = new Scalar(8, 106, 171);
+            Scalar grey = new Scalar(140, 140, 140);
+
+            Mat kern = new Mat( 3, 3, CvType.CV_8S );
+            int row = 0, col = 0;
+            kern.put(row ,col, 0, -1, 0, -1, 5, -1, 0, -1, 0 );
 
             //Determines the distance the averages are from our ideal values and normalizes them
+            Imgproc.filter2D(output, output, output.depth(), kern);
             redDist = Math.sqrt(Math.pow((mu.val[0] - red.val[0]), 2) + Math.pow((mu.val[1] - red.val[1]), 2) + Math.pow((mu.val[2] - red.val[2]), 2));
             greenDist = Math.sqrt(Math.pow((mu.val[0] - green.val[0]), 2) + Math.pow((mu.val[1] - green.val[1]), 2) + Math.pow((mu.val[2] - green.val[2]), 2));
             blueDist = Math.sqrt(Math.pow((mu.val[0] - blue.val[0]), 2) + Math.pow((mu.val[1] - blue.val[1]), 2) + Math.pow((mu.val[2] - blue.val[2]), 2));
 
-        /*
-            Mat cannyEdges = new Mat();
+            /*
+            List<MatOfPoint> contours = new ArrayList<>();
             Mat hierarchy = new Mat();
-            List<MatOfPoint> contourList = new ArrayList<MatOfPoint>(); //A list to store all the contours
+            Mat cannyOutput = new Mat();
+            Imgproc.blur(output, output, new Size( 3,3));
 
-            Imgproc.Canny(input, cannyEdges, 10, 100);
-            Imgproc.findContours(cannyEdges, contourList, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.Canny(output, cannyOutput, 100, 300, 3, false);
+            Mat dst = new Mat(input.size(), CvType.CV_8UC3, Scalar.all(0));
+            input.copyTo(dst, cannyOutput);
 
-            //Drawing contours on a new image
-            Mat contours = new Mat();
-            contours.create(cannyEdges.rows(), cannyEdges.cols(), CvType.CV_8UC3);
-            Random r = new Random();
-            for (int i = 0; i < contourList.size(); i++) {
-                Imgproc.drawContours(contours, contourList, i, new Scalar(r.nextInt(255), r.nextInt(255), r.nextInt(255)), -1);
-            }
-         */
+            Imgproc.findContours(cannyOutput, contours, hierarchy, Imgproc.CV_SHAPE_RECT,
+            Imgproc.CHAIN_APPROX_SIMPLE);
+            //Drawing the Contours
+            Scalar color = new Scalar(0, 0, 255);
+            Imgproc.drawContours(input, contours, -1, color, 2, Imgproc.LINE_8,
+            hierarchy, 2, new Point() ) ;
+
+             */
+
+
 
 
             //Determines position based on which distance is the smallest
@@ -128,7 +141,7 @@ public class                                        CameraSetupOpMode extends Li
             //webcam.closeCameraDevice();
 
             //  Debug
-            telemetry.addData("Parking Spot", position);
+            //telemetry.addData("Parking Spot", position);
             telemetry.update();
             return output;
         }
