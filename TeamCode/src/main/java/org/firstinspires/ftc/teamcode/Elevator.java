@@ -41,9 +41,9 @@ public class Elevator extends Thread {
 
         public static int CONE_WIGGLE = (int)(CONE_2_POS * 0.1);
 
-        public static double ELEVATOR_SPEED = 2;
+        public static double ELEVATOR_SPEED = 1;
         public static double MIN_ELEVATOR_SPEED = -1;
-        public static double MAX_ELEVATOR_SPEED = 2;
+        public static double MAX_ELEVATOR_SPEED = 1;
 
         private DcMotor elevatorDrive;
         private int totalCounts;
