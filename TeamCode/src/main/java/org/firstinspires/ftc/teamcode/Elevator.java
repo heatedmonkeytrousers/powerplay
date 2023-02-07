@@ -26,17 +26,19 @@ public class Elevator extends Thread {
         public static int CONE_1_POS = GROUND_POSITION;
      */
 
+    // 435rpm - 13.7:1
+    // 312rpm - 19.2:1
         public static int GROUND_POSITION = 0;
-        public static int LOW_POSITION = (int) ((4141/50.9) * 13.7);
-        public static int MIDDLE_POSITION = (int) ((6847/50.9) * 13.7);
-        public static int HIGH_POSITION = (int) ((9450/50.9) * 13.7);
+        public static int LOW_POSITION = (int) ((4141/50.9) * 19.2);
+        public static int MIDDLE_POSITION = (int) ((6847/50.9) * 19.2);
+        public static int HIGH_POSITION = (int) ((9450/50.9) * 19.2);
 
-        public static int DROP_AMOUNT = (int) ((800/50.9) * 13.7);
+        public static int DROP_AMOUNT = (int) ((800/50.9) * 19.2);
 
-        public static int CONE_5_POS = (int) ((1529/50.9) * 13.7);
-        public static int CONE_4_POS = (int) ((1145/50.9) * 13.7);
-        public static int CONE_3_POS = (int) ((748/50.9) * 13.7);
-        public static int CONE_2_POS = (int) ((400/50.9) * 13.7);
+        public static int CONE_5_POS = (int) ((1529/50.9) * 19.2);
+        public static int CONE_4_POS = (int) ((1145/50.9) * 19.2);
+        public static int CONE_3_POS = (int) ((748/50.9) * 19.2);
+        public static int CONE_2_POS = (int) ((400/50.9) * 19.2);
         public static int CONE_1_POS = GROUND_POSITION;
 
         public static int CONE_WIGGLE = (int)(CONE_2_POS * 0.1);
