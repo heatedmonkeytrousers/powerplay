@@ -26,15 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+//To Do: Adjust ideal rgb for lower values and check if masking works on field
 @Autonomous(name = "Robot Setup Camera Super Class", group = "Robot")
 @Disabled
 public class                                        CameraSetupOpMode extends LinearOpMode {
 
     protected OpenCvWebcam webcam = null;
     protected Scalar mu = new Scalar(0, 0, 0);
-    protected double redDist = 0;
-    protected double greenDist = 0;
-    protected double blueDist = 0;
     protected Motion.PARKING_SPOT position = Motion.PARKING_SPOT.PARK_ONE;
 
 
@@ -51,7 +49,8 @@ public class                                        CameraSetupOpMode extends Li
             @Override
             public void onOpened() {
                 //Camera Starts Running
-                webcam.startStreaming(1920, 1080, OpenCvCameraRotation.UPRIGHT);
+                //1920, 1080
+                webcam.startStreaming(432, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -68,10 +67,15 @@ public class                                        CameraSetupOpMode extends Li
 
         @Override
         public Mat processFrame(Mat input) {
+             double redDist = 0;
+             double greenDist = 0;
+             double blueDist = 0;
+             double greyDist = 0;
 
             //Crops the input but sets the output to the un-cropped input
             Mat input2 = input;
-            input = input.submat(new Rect(860, 440, 80, 120));
+            //input = input.submat(new Rect(860, 440, 80, 120));
+            input = input.submat(new Rect(50, 50, 100, 120));
             output = input2;
 
             //Gets the averages for each red, green, and blue in the input
@@ -82,38 +86,33 @@ public class                                        CameraSetupOpMode extends Li
             Scalar green = new Scalar(54, 133, 113);
             Scalar blue = new Scalar(8, 106, 171);
             Scalar grey = new Scalar(140, 140, 140);
+            Mat mask = new Mat(output.rows() , output.cols(), output.type());
 
-            Mat kern = new Mat( 3, 3, CvType.CV_8S );
-            int row = 0, col = 0;
-            kern.put(row ,col, 0, -1, 0, -1, 5, -1, 0, -1, 0 );
+            for (int r = 0; r < output.rows(); r++) {
+                for (int c = 0; c < output.cols(); c++) {
+                    double[] v = output.get(r, c);
+                    redDist = Math.sqrt(Math.pow((v[0] - red.val[0]), 2) + Math.pow((v[1] - red.val[1]), 2) + Math.pow((v[2] - red.val[2]), 2));
+                    greenDist = Math.sqrt(Math.pow((v[0] - green.val[0]), 2) + Math.pow((v[1] - green.val[1]), 2) + Math.pow((v[2] - green.val[2]), 2));
+                    blueDist = Math.sqrt(Math.pow((v[0] - blue.val[0]), 2) + Math.pow((v[1] - blue.val[1]), 2) + Math.pow((v[2] - blue.val[2]), 2));
+                    greyDist = Math.sqrt(Math.pow((v[0] - grey.val[0]), 2) + Math.pow((v[1] - grey.val[1]), 2) + Math.pow((v[2] - grey.val[2]), 2));
+
+                    if (greyDist < redDist && greyDist < greenDist && greyDist < blueDist) {
+                        //mask
+                        //double [] data = {255,255,255,255};
+                       // mask.put(r, c, data);
+                    } else {
+                        double [] data = {255,255,255,255};
+                        mask.put(r, c, data);
+                    }
+                }
+            }
+
+            Core.bitwise_and(mask, output, output);
 
             //Determines the distance the averages are from our ideal values and normalizes them
-            Imgproc.filter2D(output, output, output.depth(), kern);
             redDist = Math.sqrt(Math.pow((mu.val[0] - red.val[0]), 2) + Math.pow((mu.val[1] - red.val[1]), 2) + Math.pow((mu.val[2] - red.val[2]), 2));
             greenDist = Math.sqrt(Math.pow((mu.val[0] - green.val[0]), 2) + Math.pow((mu.val[1] - green.val[1]), 2) + Math.pow((mu.val[2] - green.val[2]), 2));
             blueDist = Math.sqrt(Math.pow((mu.val[0] - blue.val[0]), 2) + Math.pow((mu.val[1] - blue.val[1]), 2) + Math.pow((mu.val[2] - blue.val[2]), 2));
-
-            /*
-            List<MatOfPoint> contours = new ArrayList<>();
-            Mat hierarchy = new Mat();
-            Mat cannyOutput = new Mat();
-            Imgproc.blur(output, output, new Size( 3,3));
-
-            Imgproc.Canny(output, cannyOutput, 100, 300, 3, false);
-            Mat dst = new Mat(input.size(), CvType.CV_8UC3, Scalar.all(0));
-            input.copyTo(dst, cannyOutput);
-
-            Imgproc.findContours(cannyOutput, contours, hierarchy, Imgproc.CV_SHAPE_RECT,
-            Imgproc.CHAIN_APPROX_SIMPLE);
-            //Drawing the Contours
-            Scalar color = new Scalar(0, 0, 255);
-            Imgproc.drawContours(input, contours, -1, color, 2, Imgproc.LINE_8,
-            hierarchy, 2, new Point() ) ;
-
-             */
-
-
-
 
             //Determines position based on which distance is the smallest
             if (redDist < greenDist && redDist < blueDist) {
@@ -128,15 +127,18 @@ public class                                        CameraSetupOpMode extends Li
             }
 
             //Displays a rectangle for lining up the webcam
+
             Imgproc.rectangle(
                     output,
                     new Point(
-                            860,
-                            440),
+                            50,
+                            50),
                     new Point(
-                            940,
-                            590),
-                    new Scalar(0, 0, 0), 5);
+                            150,
+                            170),
+                    new Scalar(0, 0, 0), 2);
+
+
 
             //webcam.closeCameraDevice();
 

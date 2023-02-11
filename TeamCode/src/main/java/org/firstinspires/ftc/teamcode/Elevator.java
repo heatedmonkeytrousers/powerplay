@@ -39,6 +39,8 @@ public class Elevator extends Thread {
         public static int CONE_2_POS = (int) ((400/50.9) * 13.7);
         public static int CONE_1_POS = GROUND_POSITION;
 
+        public static int MANUAL_DROP = (int) ((200/50.9) * 13.7);
+
         public static int CONE_WIGGLE = (int)(CONE_2_POS * 0.1);
 
         public static double ELEVATOR_SPEED = 1;
@@ -118,10 +120,10 @@ public class Elevator extends Thread {
                     claw.openClaw();
                     break;
                 case ADJUST_DOWN:
-                    setPosition(power, elevatorDrive.getCurrentPosition()-250);
+                    setPosition(power, elevatorDrive.getCurrentPosition()-MANUAL_DROP);
                     break;
                 case ADJUST_UP:
-                    setPosition(power,elevatorDrive.getCurrentPosition()+250);
+                    setPosition(power,elevatorDrive.getCurrentPosition()+MANUAL_DROP);
                     break;
                 case CONE_5:
                     setPosition(power, CONE_5_POS);
