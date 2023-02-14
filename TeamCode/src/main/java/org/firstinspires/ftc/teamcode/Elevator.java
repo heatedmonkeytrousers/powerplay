@@ -41,7 +41,7 @@ public class Elevator extends Thread {
         public static int CONE_2_POS = (int) ((400/50.9) * 19.2);
         public static int CONE_1_POS = GROUND_POSITION;
 
-        public static int MANUAL_DROP = (int) ((200/50.9) * 13.7);
+        public static int MANUAL_DROP = (int) ((200/50.9) * 19.2);
 
         public static int CONE_WIGGLE = (int)(CONE_2_POS * 0.1);
 

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-//To Do: Adjust ideal rgb for lower values and check if masking works on field
 @Autonomous(name = "Robot Setup Camera Super Class", group = "Robot")
 @Disabled
 public class                                        CameraSetupOpMode extends LinearOpMode {
@@ -75,39 +74,57 @@ public class                                        CameraSetupOpMode extends Li
             //Crops the input but sets the output to the un-cropped input
             Mat input2 = input;
             //input = input.submat(new Rect(860, 440, 80, 120));
-            input = input.submat(new Rect(50, 50, 100, 120));
+            input = input.submat(new Rect(166, 90, 100, 60));
             output = input2;
 
-            //Gets the averages for each red, green, and blue in the input
-            mu = Core.mean(input);
-
             //Scalars for our ideal values
-            Scalar red = new Scalar(175, 48, 51);
-            Scalar green = new Scalar(54, 133, 113);
-            Scalar blue = new Scalar(8, 106, 171);
-            Scalar grey = new Scalar(140, 140, 140);
-            Mat mask = new Mat(output.rows() , output.cols(), output.type());
+            //Scalar red = new Scalar(175, 48, 51);
+            //Scalar green = new Scalar(54, 133, 113);
+            //Scalar blue = new Scalar(8, 106, 171);
+            Scalar red = new Scalar(31, 7, 9);
+            Scalar green = new Scalar(6, 24, 21);
+            Scalar blue = new Scalar(2, 20, 33);
+            Scalar grey = new Scalar(30, 15, 15);
+            Mat mask = new Mat(input.rows() , input.cols(), input.type());
 
-            for (int r = 0; r < output.rows(); r++) {
-                for (int c = 0; c < output.cols(); c++) {
-                    double[] v = output.get(r, c);
+            for (int r = 0; r < input.rows(); r++) {
+                for (int c = 0; c < input.cols(); c++) {
+                    double[] v = input.get(r, c);
                     redDist = Math.sqrt(Math.pow((v[0] - red.val[0]), 2) + Math.pow((v[1] - red.val[1]), 2) + Math.pow((v[2] - red.val[2]), 2));
                     greenDist = Math.sqrt(Math.pow((v[0] - green.val[0]), 2) + Math.pow((v[1] - green.val[1]), 2) + Math.pow((v[2] - green.val[2]), 2));
                     blueDist = Math.sqrt(Math.pow((v[0] - blue.val[0]), 2) + Math.pow((v[1] - blue.val[1]), 2) + Math.pow((v[2] - blue.val[2]), 2));
                     greyDist = Math.sqrt(Math.pow((v[0] - grey.val[0]), 2) + Math.pow((v[1] - grey.val[1]), 2) + Math.pow((v[2] - grey.val[2]), 2));
 
                     if (greyDist < redDist && greyDist < greenDist && greyDist < blueDist) {
-                        //mask
-                        //double [] data = {255,255,255,255};
-                       // mask.put(r, c, data);
+                        /*
+                        if (redDist > greenDist && redDist > blueDist) {
+                            double [] redData = {255,0,0,0};
+                            mask.put(r,c,redData);
+                        } else if (greenDist > blueDist) {
+                            double [] greenData = {0,255,0,0};
+                            mask.put(r,c,greenData);
+                        } else {
+                            double [] blueData = {0,0,255,0};
+                            mask.put(r,c,blueData);
+                        }
+
+                         */
                     } else {
                         double [] data = {255,255,255,255};
                         mask.put(r, c, data);
                     }
+
                 }
             }
 
-            Core.bitwise_and(mask, output, output);
+            Core.bitwise_and(mask, input, input);
+            //mask.copyTo(output, mask);
+
+
+
+            //Gets the averages for each red, green, and blue in the input
+
+            mu = Core.mean(input);
 
             //Determines the distance the averages are from our ideal values and normalizes them
             redDist = Math.sqrt(Math.pow((mu.val[0] - red.val[0]), 2) + Math.pow((mu.val[1] - red.val[1]), 2) + Math.pow((mu.val[2] - red.val[2]), 2));
@@ -126,24 +143,27 @@ public class                                        CameraSetupOpMode extends Li
                 position = Motion.PARKING_SPOT.PARK_THREE;
             }
 
-            //Displays a rectangle for lining up the webcam
 
+
+            //Displays a rectangle for lining up the webcam
+            /*
             Imgproc.rectangle(
                     output,
                     new Point(
-                            50,
-                            50),
+                            166,
+                            90),
                     new Point(
-                            150,
-                            170),
-                    new Scalar(0, 0, 0), 2);
+                            266,
+                            150),
+                    new Scalar(255, 0, 0), 1);
 
+             */
 
 
             //webcam.closeCameraDevice();
 
             //  Debug
-            //telemetry.addData("Parking Spot", position);
+            telemetry.addData("Parking Spot", position);
             telemetry.update();
             return output;
         }
