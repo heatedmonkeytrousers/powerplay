@@ -77,7 +77,7 @@ public class                                        CameraSetupOpMode extends Li
 
             //Crops the input but sets the output to the un-cropped input
             Mat input2 = input;
-            input = input.submat(new Rect(166, 90, 100, 60));
+            input = input.submat(new Rect(146, 90, 100, 60));
             output = input2;
 
             //Badger Bots ideal values
@@ -151,10 +151,10 @@ public class                                        CameraSetupOpMode extends Li
             Imgproc.rectangle(
                     output,
                     new Point(
-                            166,
+                            146,
                             90),
                     new Point(
-                            266,
+                            246,
                             150),
                     new Scalar(255, 255, 255), 1);
 
