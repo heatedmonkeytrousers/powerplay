@@ -59,6 +59,10 @@ public class                                        CameraSetupOpMode extends Li
         });
     }
 
+    public double redTot = 0;
+    public double greenTot = 0;
+    public double blueTot = 0;
+
     public class CameraCalibration extends OpenCvPipeline {
 
         //Sets up position var and output
@@ -78,14 +82,25 @@ public class                                        CameraSetupOpMode extends Li
             output = input2;
 
             //Scalars for our ideal values
-            //Scalar red = new Scalar(175, 48, 51);
-            //Scalar green = new Scalar(54, 133, 113);
-            //Scalar blue = new Scalar(8, 106, 171);
-            Scalar red = new Scalar(31, 7, 9);
-            Scalar green = new Scalar(6, 24, 21);
-            Scalar blue = new Scalar(2, 20, 33);
-            Scalar grey = new Scalar(30, 15, 15);
+            //Original scalar values
+            /*
+            Scalar red = new Scalar(175, 48, 51);
+            Scalar green = new Scalar(54, 133, 113);
+            Scalar blue = new Scalar(8, 106, 171);
+             */
+
+            //Badger Bots ideal values
+            Scalar red = new Scalar(180, 37, 42);
+            Scalar green = new Scalar(55, 101, 88);
+            Scalar blue = new Scalar(23, 115, 169);
+            Scalar grey = new Scalar(140,140,140);
+           // Scalar red = new Scalar(31, 7, 9);
+            //Scalar green = new Scalar(6, 24, 21);
+            //Scalar blue = new Scalar(2, 20, 33);
+            //Scalar grey = new Scalar(15, 15, 15);
             Mat mask = new Mat(input.rows() , input.cols(), input.type());
+            int count = 0;
+
 
             for (int r = 0; r < input.rows(); r++) {
                 for (int c = 0; c < input.cols(); c++) {
@@ -109,9 +124,14 @@ public class                                        CameraSetupOpMode extends Li
                         }
 
                          */
+
                     } else {
                         double [] data = {255,255,255,255};
                         mask.put(r, c, data);
+                        count++;
+                        redTot += v[0];
+                        greenTot += v[1];
+                        blueTot += v[2];
                     }
 
                 }
@@ -120,11 +140,14 @@ public class                                        CameraSetupOpMode extends Li
             Core.bitwise_and(mask, input, input);
             //mask.copyTo(output, mask);
 
-
+            redTot /= count;
+            greenTot /= count;
+            blueTot /= count;
 
             //Gets the averages for each red, green, and blue in the input
 
-            mu = Core.mean(input);
+            //mu = Core.mean(input);
+            mu = new Scalar(redTot, greenTot, blueTot);
 
             //Determines the distance the averages are from our ideal values and normalizes them
             redDist = Math.sqrt(Math.pow((mu.val[0] - red.val[0]), 2) + Math.pow((mu.val[1] - red.val[1]), 2) + Math.pow((mu.val[2] - red.val[2]), 2));
@@ -146,7 +169,7 @@ public class                                        CameraSetupOpMode extends Li
 
 
             //Displays a rectangle for lining up the webcam
-            /*
+
             Imgproc.rectangle(
                     output,
                     new Point(
@@ -155,17 +178,21 @@ public class                                        CameraSetupOpMode extends Li
                     new Point(
                             266,
                             150),
-                    new Scalar(255, 0, 0), 1);
+                    new Scalar(255, 255, 255), 1);
 
-             */
+
 
 
             //webcam.closeCameraDevice();
 
             //  Debug
             telemetry.addData("Parking Spot", position);
+            telemetry.addData("Red Total", (int) redTot);
+            telemetry.addData("Green Total", (int) greenTot);
+            telemetry.addData("Blue Total", (int) blueTot);
+            telemetry.addData("Mean", "%d %d %d", (int) mu.val[0], (int) mu.val[1], (int) mu.val[2]);
             telemetry.update();
-            return output;
+            return input;
         }
     }
 }

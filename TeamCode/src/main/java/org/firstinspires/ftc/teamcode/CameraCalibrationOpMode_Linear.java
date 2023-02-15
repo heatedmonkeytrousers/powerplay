@@ -21,10 +21,12 @@ public class CameraCalibrationOpMode_Linear extends CameraSetupOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            //telemetry.addData("Parking Spot", position);
+            telemetry.addData("Parking Spot", position);
             telemetry.addLine("Waiting for start");
-            telemetry.addData("Parking spot", position);
-            //telemetry.addData("Mean", "%d %d %d", (int) mu.val[0], (int) mu.val[1], (int) mu.val[2]);
+            telemetry.addData("Red Total", (int) redTot);
+            telemetry.addData("Green Total", (int) greenTot);
+            telemetry.addData("Blue Total", (int) blueTot);
+            telemetry.addData("Mean", "%d %d %d", (int) mu.val[0], (int) mu.val[1], (int) mu.val[2]);
             telemetry.update();
             sleep(50);
         }
