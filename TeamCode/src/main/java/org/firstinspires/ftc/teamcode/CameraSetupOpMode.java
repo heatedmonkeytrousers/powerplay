@@ -77,57 +77,36 @@ public class                                        CameraSetupOpMode extends Li
 
             //Crops the input but sets the output to the un-cropped input
             Mat input2 = input;
-            //input = input.submat(new Rect(860, 440, 80, 120));
             input = input.submat(new Rect(166, 90, 100, 60));
             output = input2;
-
-            //Scalars for our ideal values
-            //Original scalar values
-            /*
-            Scalar red = new Scalar(175, 48, 51);
-            Scalar green = new Scalar(54, 133, 113);
-            Scalar blue = new Scalar(8, 106, 171);
-             */
 
             //Badger Bots ideal values
             Scalar red = new Scalar(180, 37, 42);
             Scalar green = new Scalar(55, 101, 88);
             Scalar blue = new Scalar(23, 115, 169);
             Scalar grey = new Scalar(140,140,140);
-           // Scalar red = new Scalar(31, 7, 9);
-            //Scalar green = new Scalar(6, 24, 21);
-            //Scalar blue = new Scalar(2, 20, 33);
-            //Scalar grey = new Scalar(15, 15, 15);
+
             Mat mask = new Mat(input.rows() , input.cols(), input.type());
             int count = 0;
 
-
+            //Goes through every pixel of input
             for (int r = 0; r < input.rows(); r++) {
                 for (int c = 0; c < input.cols(); c++) {
                     double[] v = input.get(r, c);
+                    //Gets averages for each color
                     redDist = Math.sqrt(Math.pow((v[0] - red.val[0]), 2) + Math.pow((v[1] - red.val[1]), 2) + Math.pow((v[2] - red.val[2]), 2));
                     greenDist = Math.sqrt(Math.pow((v[0] - green.val[0]), 2) + Math.pow((v[1] - green.val[1]), 2) + Math.pow((v[2] - green.val[2]), 2));
                     blueDist = Math.sqrt(Math.pow((v[0] - blue.val[0]), 2) + Math.pow((v[1] - blue.val[1]), 2) + Math.pow((v[2] - blue.val[2]), 2));
                     greyDist = Math.sqrt(Math.pow((v[0] - grey.val[0]), 2) + Math.pow((v[1] - grey.val[1]), 2) + Math.pow((v[2] - grey.val[2]), 2));
 
+                    //If grey is the closest point
                     if (greyDist < redDist && greyDist < greenDist && greyDist < blueDist) {
-                        /*
-                        if (redDist > greenDist && redDist > blueDist) {
-                            double [] redData = {255,0,0,0};
-                            mask.put(r,c,redData);
-                        } else if (greenDist > blueDist) {
-                            double [] greenData = {0,255,0,0};
-                            mask.put(r,c,greenData);
-                        } else {
-                            double [] blueData = {0,0,255,0};
-                            mask.put(r,c,blueData);
-                        }
-
-                         */
 
                     } else {
+                        //Masks the pixel
                         double [] data = {255,255,255,255};
                         mask.put(r, c, data);
+                        //Increments the total of red, green, and blue pixels
                         count++;
                         redTot += v[0];
                         greenTot += v[1];
@@ -138,15 +117,14 @@ public class                                        CameraSetupOpMode extends Li
             }
 
             Core.bitwise_and(mask, input, input);
-            //mask.copyTo(output, mask);
 
+            //Gets the averages for the totals
             redTot /= count;
             greenTot /= count;
             blueTot /= count;
 
             //Gets the averages for each red, green, and blue in the input
 
-            //mu = Core.mean(input);
             mu = new Scalar(redTot, greenTot, blueTot);
 
             //Determines the distance the averages are from our ideal values and normalizes them
