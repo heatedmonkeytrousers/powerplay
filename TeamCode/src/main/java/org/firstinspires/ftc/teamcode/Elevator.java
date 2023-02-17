@@ -147,14 +147,13 @@ public class Elevator extends Thread {
             }
         }
         public void drop () {
-            setPosition(-ELEVATOR_SPEED, elevatorDrive.getCurrentPosition() - DROP_AMOUNT);
+            setPosition(ELEVATOR_SPEED, elevatorDrive.getCurrentPosition() - DROP_AMOUNT);
             totalCounts = elevatorDrive.getCurrentPosition();
             try {
                 Thread.sleep(DROP_AMOUNT);
             } catch (InterruptedException e) {
 
             }
-            claw.openClaw();
         }
 
         @Override
@@ -166,7 +165,8 @@ public class Elevator extends Thread {
 
                 // The set buttons for the elevators highs
                 if (gamepad.a) {
-                    setPosition(-ELEVATOR_SPEED, GROUND_POSITION);
+
+                    setPosition(ELEVATOR_SPEED, GROUND_POSITION);
 
                 } else if (gamepad.b) {
 
@@ -180,27 +180,43 @@ public class Elevator extends Thread {
                         setPosition(ELEVATOR_SPEED, HIGH_POSITION);
 
                 } else if (gamepad.dpad_down) {
-                    int pos = elevatorDrive.getCurrentPosition()-200;
-                    //if(pos<GROUND_POSITION) pos = GROUND_POSITION;
-                    setPosition(-ELEVATOR_SPEED, pos);
-
-                } else if (gamepad.dpad_up) {
-                    int pos = elevatorDrive.getCurrentPosition()+200;
-                    if(pos>HIGH_POSITION) pos = HIGH_POSITION;
+                    int pos = elevatorDrive.getCurrentPosition()-MANUAL_DROP;
+                    if (pos < GROUND_POSITION) pos = GROUND_POSITION;
                     setPosition(ELEVATOR_SPEED, pos);
 
-                } else if (gamepad.back) {
+                } /*else if (gamepad.right_trigger!=0 && gamepad.left_trigger==0) {
+                    int pos = elevatorDrive.getCurrentPosition()-MANUAL_DROP;
+                    //if (pos < GROUND_POSITION) pos = GROUND_POSITION;
+                    setPosition(ELEVATOR_SPEED, pos);
+                }
+                */
+                else if (gamepad.right_trigger !=0) {
+                    int pos = elevatorDrive.getCurrentPosition()+100;
+                    if (pos > HIGH_POSITION+200) pos = HIGH_POSITION+200;
+                    setPosition(ELEVATOR_SPEED, pos);
+                }
+                else if (gamepad.dpad_up) {
+                    int pos = elevatorDrive.getCurrentPosition()+MANUAL_DROP;
+                    if(pos>HIGH_POSITION + MANUAL_DROP) pos = HIGH_POSITION + MANUAL_DROP;
+                    setPosition(ELEVATOR_SPEED, pos);
+
+                } else if (gamepad.left_trigger !=0) {
+                    int pos = elevatorDrive.getCurrentPosition()-100;
+                    if (pos < GROUND_POSITION) pos = GROUND_POSITION;
+                    setPosition(ELEVATOR_SPEED, pos);
+                }
+                else if (gamepad.back) {
                     elevatorDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 } else if (gamepad.dpad_left) {
                     int pos = elevatorDrive.getCurrentPosition();
                     if (pos > CONE_5_POS + CONE_WIGGLE){
-                        setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_5);
+                        setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_5);
                     } else if (pos > CONE_4_POS + CONE_WIGGLE){
-                        setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_4);
+                        setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_4);
                     } else if (pos > CONE_3_POS + CONE_WIGGLE){
-                        setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_3);
+                        setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_3);
                     } else if (pos > CONE_2_POS + CONE_WIGGLE){
-                        setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_2);
+                        setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_2);
                     }
                     else{
                         setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_1);
@@ -218,9 +234,7 @@ public class Elevator extends Thread {
                     } else if (pos < CONE_5_POS - CONE_WIGGLE){
                         setPosition(ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_5);
                     }
-                    else{
-                        setPosition(-ELEVATOR_SPEED, ELEVATOR_HEIGHT.CONE_1);
-                    }
+
                 }
             }
         }

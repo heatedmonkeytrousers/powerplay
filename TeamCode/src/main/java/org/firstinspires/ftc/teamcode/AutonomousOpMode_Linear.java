@@ -8,13 +8,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 public class AutonomousOpMode_Linear extends StandardSetupOpMode {
     private final boolean isLeft;
     private final double direction;
+    private final double turnCal;
 
     public AutonomousOpMode_Linear( boolean isLeft ){
         this.isLeft = isLeft;
-        if(isLeft)
+        if(isLeft) {
             direction = -1.0;
-        else
+            turnCal = 0;
+        }
+        else {
             direction = 1.0;
+            turnCal = -1;
+        }
     }
 
     @Override
@@ -45,12 +50,12 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         motion.translate (Motion.Direction.FORWARD, 2.7, 0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.HIGH);
         motion.translate(Motion.Direction.BACKWARD, 0.55, 0.5);
-        motion.rotation (Motion.Direction.LEFT,direction * 45,0.5);
+        motion.rotation (Motion.Direction.LEFT,direction * (45+turnCal),0.5);
         motion.translate (Motion.Direction.FORWARD, 0.65,0.5);
         elevator.drop();
         motion.translate (Motion.Direction.BACKWARD, 0.68,0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
-        motion.rotation(Motion.Direction.RIGHT, direction * 135,0.5);
+        motion.rotation(Motion.Direction.RIGHT, direction * (135+turnCal),0.5);
         claw.openClaw();
         motion.translate (Motion.Direction.FORWARD,1,0.5);
         claw.closeClaw();
@@ -58,12 +63,12 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
         sleep(400);
         motion.translate(Motion.Direction.BACKWARD, 1,0.5);
-        motion.rotation(Motion.Direction.RIGHT, direction * 45,0.5);
+        motion.rotation(Motion.Direction.RIGHT, direction * (45+turnCal),0.5);
         motion.translate (Motion.Direction.FORWARD, 0.7,0.4);
         motion.translate (Motion.Direction.BACKWARD, 0.18,0.4);
         elevator.drop();
         motion.translate (Motion.Direction.BACKWARD, 0.30,0.4);
-        motion.rotation(Motion.Direction.LEFT, direction * 45,0.5);
+        motion.rotation(Motion.Direction.LEFT, direction * (45+turnCal),0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.GROUND);
         switch(parkingSpot){
             case PARK_ONE:
