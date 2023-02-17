@@ -31,7 +31,7 @@ public class Elevator extends Thread {
         public static int GROUND_POSITION = 0;
         public static int LOW_POSITION = (int) ((4141/50.9) * 19.2);
         public static int MIDDLE_POSITION = (int) ((6847/50.9) * 19.2);
-        public static int HIGH_POSITION = (int) ((9450/50.9) * 19.2);
+        public static int HIGH_POSITION = (int) ((9650/50.9) * 19.2);
 
         public static int DROP_AMOUNT = (int) ((800/50.9) * 19.2);
 
