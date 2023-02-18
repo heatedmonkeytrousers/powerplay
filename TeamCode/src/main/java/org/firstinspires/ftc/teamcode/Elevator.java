@@ -12,6 +12,7 @@ import org.opencv.core.Mat;
 public class Elevator extends Thread {
         //117 RPM Values
     /*
+
         public static int GROUND_POSITION = 0;
         public static int LOW_POSITION = 4141;
         public static int MIDDLE_POSITION = 6847;
