@@ -16,7 +16,7 @@ public class Motion extends Thread {
 
     public static int ROTATE_360 = 3800;
 
-    private static double PF = 1;
+    private static double PF = 0.75;
 
     private final DcMotor frontLeftDrive;
     private final DcMotor frontRightDrive;
@@ -83,10 +83,11 @@ public class Motion extends Thread {
                 rearRightPower *= 0.75;
             }
             if (gamepad.right_bumper) {
-                frontLeftPower *= 0.5;
-                rearLeftPower *= 0.5;
-                frontRightPower *= 0.5;
-                rearRightPower *= 0.5;
+                frontLeftPower *= 1;
+                rearLeftPower *= 1;
+                frontRightPower *= 1;
+                rearRightPower *= 1;
+
             } else if (gamepad.a) {
                 claw.openClaw();
             } else if (gamepad.b) {
@@ -103,10 +104,10 @@ public class Motion extends Thread {
             } else if (gamepad.dpad_right) {
                 translate(Direction.RIGHT, 1, 1);
             } else if (gamepad.left_trigger > 0.5) {
-                rotation(Direction.LEFT, 45, 1);
+                rotation(Direction.LEFT, 90, 1);
 
             } else if (gamepad.right_trigger > 0.5) {
-                rotation(Direction.RIGHT, 45, 1);
+                rotation(Direction.RIGHT, 90, 1);
             }
 
             // Send calculated power to wheels
@@ -181,9 +182,13 @@ public class Motion extends Thread {
         rearLeftDrive.setPower(power);
         rearRightDrive.setPower(power);
 
-            while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()) {
+        while (true) {
+            boolean frontDone = !frontLeftDrive.isBusy() && !frontRightDrive.isBusy();
+            boolean rearDone = !rearLeftDrive.isBusy() && !rearRightDrive.isBusy();
+            if (frontDone || rearDone) {
+                break;
             }
-
+        }
 
         // reset mode
         frontLeftDrive.setPower(0);
@@ -194,44 +199,6 @@ public class Motion extends Thread {
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rearLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rearRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void lock(){
-
-        double power = 1;
-
-        // Get current positions
-        int frontLeftPosition = frontLeftDrive.getCurrentPosition();
-        int frontRightPosition = frontRightDrive.getCurrentPosition();
-        int rearRightPosition = rearRightDrive.getCurrentPosition();
-        int rearLeftPosition = rearLeftDrive.getCurrentPosition();
-
-        // Move until new positions
-        frontLeftDrive.setTargetPosition(frontLeftPosition);
-        frontRightDrive.setTargetPosition(frontRightPosition);
-        rearLeftDrive.setTargetPosition(rearLeftPosition);
-        rearRightDrive.setTargetPosition(rearRightPosition);
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rearLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rearRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // will wait till in position
-        frontLeftDrive.setPower(power);
-        frontRightDrive.setPower(power);
-        rearLeftDrive.setPower(power);
-        rearRightDrive.setPower(power);
-    }
-
-    public void unlock(){
-
-        double power = 0;
-
-        // will wait till in position
-        frontLeftDrive.setPower(power);
-        frontRightDrive.setPower(power);
-        rearLeftDrive.setPower(power);
-        rearRightDrive.setPower(power);
     }
 
     public void rotation(Direction direction, double angle, double power) {
@@ -297,8 +264,13 @@ public class Motion extends Thread {
 
         // will wait till in position
 
-            while (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || rearLeftDrive.isBusy() || rearRightDrive.isBusy()) {
+        while (true) {
+            boolean frontDone = !frontLeftDrive.isBusy() && !frontRightDrive.isBusy();
+            boolean rearDone = !rearLeftDrive.isBusy() && !rearRightDrive.isBusy();
+            if (frontDone || rearDone) {
+                break;
             }
+        }
 
             frontLeftDrive.setPower(0);
             frontRightDrive.setPower(0);

@@ -57,7 +57,7 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
         motion.rotation(Motion.Direction.RIGHT, direction * (135+turnCal),0.5);
         claw.openClaw();
-        motion.translate (Motion.Direction.FORWARD,1,0.5);
+        motion.translate (Motion.Direction.FORWARD,0.95,0.5);
         claw.closeClaw();
         sleep(300);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
