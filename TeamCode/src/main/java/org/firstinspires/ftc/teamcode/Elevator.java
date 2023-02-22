@@ -29,20 +29,24 @@ public class Elevator extends Thread {
 
     // 435rpm - 13.7:1
     // 312rpm - 19.2:1
+    // 200rpm - 26.9:1
+        private final static double RATIO_1 = 50.9;
+        private final static double RATIO_2 = 26.9;
+
         public static int GROUND_POSITION = 0;
-        public static int LOW_POSITION = (int) ((4141/50.9) * 19.2);
-        public static int MIDDLE_POSITION = (int) ((6847/50.9) * 19.2);
-        public static int HIGH_POSITION = (int) ((9650/50.9) * 19.2);
+        public static int LOW_POSITION = (int) ((4141/RATIO_1) * RATIO_2);
+        public static int MIDDLE_POSITION = (int) ((6847/RATIO_1) * RATIO_2);
+        public static int HIGH_POSITION = (int) ((9650/RATIO_1) * RATIO_2);
 
-        public static int DROP_AMOUNT = (int) ((800/50.9) * 19.2);
+        public static int DROP_AMOUNT = (int) ((800/RATIO_1) * RATIO_2);
 
-        public static int CONE_5_POS = (int) ((1529/50.9) * 19.2);
-        public static int CONE_4_POS = (int) ((1145/50.9) * 19.2);
-        public static int CONE_3_POS = (int) ((748/50.9) * 19.2);
-        public static int CONE_2_POS = (int) ((400/50.9) * 19.2);
+        public static int CONE_5_POS = (int) ((1529/RATIO_1) * RATIO_2);
+        public static int CONE_4_POS = (int) ((1145/RATIO_1) * RATIO_2);
+        public static int CONE_3_POS = (int) ((748/RATIO_1) * RATIO_2);
+        public static int CONE_2_POS = (int) ((400/RATIO_1) * RATIO_2);
         public static int CONE_1_POS = GROUND_POSITION;
 
-        public static int MANUAL_DROP = (int) ((200/50.9) * 19.2);
+        public static int MANUAL_DROP = (int) ((200/RATIO_1) * RATIO_2);
 
         public static int CONE_WIGGLE = (int)(CONE_2_POS * 0.1);
 
@@ -155,6 +159,7 @@ public class Elevator extends Thread {
             } catch (InterruptedException e) {
 
             }
+            claw.openClaw();
         }
 
         @Override
