@@ -18,7 +18,7 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         }
         else {
             direction = 1.0;
-            turnCal = -1;
+            turnCal = -2;
         }
     }
 
