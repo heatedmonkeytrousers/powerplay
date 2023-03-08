@@ -57,28 +57,28 @@ public class AutonomousOpMode_Linear extends StandardSetupOpMode {
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.CONE_5);
         motion.rotation(Motion.Direction.RIGHT, direction * (135+turnCal),0.5);
         claw.openClaw();
-        motion.translate (Motion.Direction.FORWARD,0.90,0.5);
+        motion.translate (Motion.Direction.FORWARD,0.87,0.5);
         claw.closeClaw();
         sleep(300);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.LOW);
         sleep(400);
-        motion.translate(Motion.Direction.BACKWARD, 1,0.5);
+        motion.translate(Motion.Direction.BACKWARD, 0.97,0.5);
         motion.rotation(Motion.Direction.RIGHT, direction * (45+turnCal),0.5);
         motion.translate (Motion.Direction.FORWARD, 0.7,0.4);
         motion.translate (Motion.Direction.BACKWARD, 0.18,0.4);
         elevator.drop();
         motion.translate (Motion.Direction.BACKWARD, 0.30,0.4);
-        motion.rotation(Motion.Direction.LEFT, direction * (45+turnCal),0.5);
+        motion.rotation(Motion.Direction.LEFT, direction * (44.95+turnCal),0.5);
         elevator.setPosition(-1, Elevator.ELEVATOR_HEIGHT.GROUND);
         switch(parkingSpot){
             case PARK_ONE:
                 if(isLeft)
-                    motion.translate(Motion.Direction.FORWARD, 0.8, 0.6);
+                    motion.translate(Motion.Direction.FORWARD, 0.83, 0.6);
                 else
                     motion.translate(Motion.Direction.BACKWARD, 1.1, 0.75);
                 break;
             case PARK_TWO:
-                motion.translate(Motion.Direction.BACKWARD, 0.2, 0.75);
+                motion.translate(Motion.Direction.BACKWARD, 0.1, 0.75);
                 break;
             case PARK_THREE:
                 if(isLeft)

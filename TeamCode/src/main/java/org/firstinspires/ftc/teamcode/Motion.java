@@ -89,9 +89,14 @@ public class Motion extends Thread {
                 rearRightPower *= 1;
 
             } else if (gamepad.a) {
-                claw.openClaw();
-            } else if (gamepad.b) {
-                claw.closeClaw();
+                rotation(Direction.LEFT, 180,1);
+            } else if (gamepad.y) {
+                rotation(Direction.RIGHT, 180,1);
+            }
+            else if (gamepad.b) {
+                translate(Direction.RIGHT, 1.66, 1);
+            } else if (gamepad.x) {
+                translate(Direction.LEFT, 1.66, 1);
             } else if (gamepad.dpad_up) {
                 translate(Direction.FORWARD, 1, 1);
 
